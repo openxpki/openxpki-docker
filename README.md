@@ -17,15 +17,15 @@ $ docker-compose  up
 
 This will expose the OpenXPKI WebUI via `http://localhost:8080` (**unencrypted**!) with the sample configuration but without any tokens. Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates.
 
-## Prebuild images
+## Prebuilt images
 
-Prebuild images for the official releases are provided by WhiteRabbitSecurity via a public Docker repository `whiterabbitsecurity/openxpki`. 
+Prebuilt images for the official releases are provided by WhiteRabbitSecurity via a public Docker repository `whiterabbitsecurity/openxpki`. 
 
 Those are also used by the docker-compose file.
 
 ## Building your own images
 
-The Dockerfile creates a container based on Debian Jessie using prebuild deb packages which are downloaded from the OpenXPKI package mirror (https://packages.openxpki.org).
+The Dockerfile creates a container based on Debian Jessie using prebuilt deb packages which are downloaded from the OpenXPKI package mirror (https://packages.openxpki.org).
 
 The image has all code components installed but comes without any configuration. 
 
