@@ -6,7 +6,7 @@ ARG OPENXPKI_NOCONFIG=1
 # Debian has removed the update repos as jessie is near EOL
 RUN sed -i '/jessie-updates/d' /etc/apt/sources.list
 RUN apt-get update && \
-    apt-get install --assume-yes --force-yes libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales
+    apt-get install --assume-yes --force-yes libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && dpkg-reconfigure --frontend=noninteractive locales
 
