@@ -37,3 +37,21 @@ As the container comes without a database engine installed, you must setup a dat
 
 The container runs only the OpenXPKI daemon but not the WebUI frontend. You can either start apache inside the container or create a second container from the same image that runs the UI. In this case you must create a shared volume for the communication socket mounted at `/var/openxpki/` (this will be changed to (`/run/openxpki/` with one of the next releases!).
 
+## Automatic import of certificates
+
+On startup, new certificates and matching keys get imported if they are placed in `openxpki-config/ca/[REALM]/` and file names match one of the following patterns (case insensitive):
+
+`[...]_[REALM]_ROOT_CA.crt` for root certificates
+`[...]_[REALM]_ISSUING_CA[_[...]].crt` for signer certificates
+`[...]_[REALM]_DATAVAULT[_[...]].crt` for vault certificates
+
+The corresponding key files must only in the file ending (*.pem)
+
+All key files (except for data vault) are stored in the database so make sure all other tokens (e.g. certsign) are configured correctly:
+```
+    key_store: DATAPOOL
+    key: "[% ALIAS %]"
+```
+
+
+

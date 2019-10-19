@@ -17,7 +17,7 @@ services:
   openxpki-server:
 #    restart: always
     image: whiterabbitsecurity/openxpki
-    command: /usr/bin/openxpkictl start --no-detach
+    command: /usr/bin/startup
     volumes:
       - ./openxpki-config:/etc/openxpki
       - openxpkilog:/var/log/openxpki

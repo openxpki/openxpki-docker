@@ -16,6 +16,8 @@ RUN (apt-get update && apt-get install --assume-yes --force-yes libopenxpki-perl
 RUN apt-get clean
 RUN ln -s /etc/openxpki/apache2/openxpki.conf /etc/apache2/conf-enabled/
 RUN a2enmod cgid fcgid
+COPY startup.sh /usr/bin/startup
+RUN chmod +x /usr/bin/startup
 
 VOLUME /var/log/openxpki /etc/openxpki
 
