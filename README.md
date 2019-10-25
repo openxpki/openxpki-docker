@@ -19,7 +19,7 @@ This will expose the OpenXPKI WebUI via `http://localhost:8080` (**unencrypted**
 
 ## Prebuilt images
 
-Prebuilt images for the official releases are provided by WhiteRabbitSecurity via a public Docker repository `whiterabbitsecurity/openxpki`. 
+Prebuilt images for the official releases are provided by WhiteRabbitSecurity via a public Docker repository `whiterabbitsecurity/openxpki3`. 
 
 Those are also used by the docker-compose file.
 
@@ -36,4 +36,24 @@ As the container comes without a database engine installed, you must setup a dat
 ### WebUI
 
 The container runs only the OpenXPKI daemon but not the WebUI frontend. You can either start apache inside the container or create a second container from the same image that runs the UI. In this case you must create a shared volume for the communication socket mounted at `/var/openxpki/` (this will be changed to (`/run/openxpki/` with one of the next releases!).
+
+## Automatic import of certificates
+
+If you start the container using the provider startup.sh script, new certificates and matching keys get imported if they are placed in `openxpki-config/ca/[REALM]/` and file names match one of the following patterns (case insensitive):
+
+`[...]_[REALM]_ROOT_CA[_[...]].crt` for root certificates
+`[...]_[REALM]_ISSUING_CA[_[...]].crt` for signer certificates
+`[...]_[REALM]_DATAVAULT[_[...]].crt` for vault certificates
+
+The corresponding key files must only in the file ending (*.pem)
+
+Certificates/keys for data vault can also be placed in `openxpki-config/ca/`. Then, the startup script will detect it and create aliases for the realms.
+
+All key files (except for data vault) are stored in the database so make sure all other tokens (e.g. certsign) are configured correctly:
+```
+    key_store: DATAPOOL
+    key: "[% ALIAS %]"
+```
+
+
 

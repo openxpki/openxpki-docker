@@ -1,21 +1,23 @@
-FROM debian:jessie
+FROM debian:buster
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG OPENXPKI_NOCONFIG=1
 
-# Debian has removed the update repos as jessie is near EOL
-RUN sed -i '/jessie-updates/d' /etc/apt/sources.list
 RUN apt-get update && \
-    apt-get install --assume-yes --force-yes libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales
+    apt-get install --assume-yes gpg libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && dpkg-reconfigure --frontend=noninteractive locales
-
-RUN wget https://packages.openxpki.org/v2/debian/openxpki.list -O /etc/apt/sources.list.d/openxpki.list
-RUN wget https://packages.openxpki.org/v2/debian/Release.key -O - | apt-key add -
-RUN (apt-get update && apt-get install --assume-yes --force-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver || /bin/true)
+RUN wget https://packages.openxpki.org/v3/debian/openxpki.list -O /etc/apt/sources.list.d/openxpki.list
+RUN wget https://packages.openxpki.org/v3/debian/Release.key -O - | apt-key add -
+RUN apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver libcrypt-libscep-perl libscep 
 RUN apt-get clean
-RUN ln -s /etc/openxpki/apache2/openxpki.conf /etc/apache2/conf-enabled/
-RUN a2enmod cgid fcgid
+RUN ln -s /etc/openxpki/contrib/apache2-openxpki.conf /etc/apache2/conf-enabled/
+# TODO: Replace conf with site and enable ssl, need to create a webserver cert on startup
+# RUN a2dissite 000-default
+# RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-enabled/
+RUN a2enmod cgid fcgid headers rewrite #ssl
+COPY startup.sh /usr/bin/startup
+RUN chmod +x /usr/bin/startup
 
 VOLUME /var/log/openxpki /etc/openxpki
 
