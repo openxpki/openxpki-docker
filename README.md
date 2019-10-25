@@ -41,11 +41,13 @@ The container runs only the OpenXPKI daemon but not the WebUI frontend. You can 
 
 On startup, new certificates and matching keys get imported if they are placed in `openxpki-config/ca/[REALM]/` and file names match one of the following patterns (case insensitive):
 
-`[...]_[REALM]_ROOT_CA.crt` for root certificates
+`[...]_[REALM]_ROOT_CA[_[...]].crt` for root certificates
 `[...]_[REALM]_ISSUING_CA[_[...]].crt` for signer certificates
 `[...]_[REALM]_DATAVAULT[_[...]].crt` for vault certificates
 
 The corresponding key files must only in the file ending (*.pem)
+
+Certificates/keys for data vault can also be placed in `openxpki-config/ca/`. Then, the startup script will detect it and create aliases for the realms.
 
 All key files (except for data vault) are stored in the database so make sure all other tokens (e.g. certsign) are configured correctly:
 ```

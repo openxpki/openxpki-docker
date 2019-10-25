@@ -12,7 +12,6 @@ function import_cert() {
   realm="$1"
   file="$2"
   type="$3"
-  realm_certificate_list="$4"
   echo "detected $type certificate for realm '$realm': $(basename "$file")"
   key_file="$BASE_PATH/$realm/$(basename "$file" .crt).pem"
   # if certificate is not root certificate, it needs a corresponding key file
@@ -20,12 +19,12 @@ function import_cert() {
     # calculate identifier for certificate
     identifier="$(openxpkiadm certificate id --file "$file")"
     # check if certificate is already imported
-    if echo "$realm_certificate_list" | grep -q "$identifier"; then
+    if openxpkicli get_cert --realm "$realm" --arg identifier="$identifier" >/dev/null 2>/dev/null; then
       echo "IGNORING $file as it is already imported"
     else
       # import certificate depending on its type
       if [ "$type" = "root" ]; then
-        openxpkiadm certificate import --file "$file" --realm "$realm"
+        openxpkiadm certificate import --file "$file"
         # No key file for root certificate
 
       elif [ "$type" = "vault" ]; then
@@ -53,22 +52,47 @@ function import_cert() {
 function do_realm_dir() {
   realm_dir="$1"
   realm="$(basename "$realm_dir")"
-  realm_certificate_list=""
-  if realm_certificate_list="$(openxpkiadm certificate list --realm "$realm")"; then
+  if openxpkiadm certificate list --realm "$realm" >/dev/null; then
     # regular expressions for finding the right files
-    root_regex=".*/\(.*_\)*$(echo "$realm")_root_ca\.crt"
+    root_regex=".*/\(.*_\)*$(echo "$realm")_root_ca\(_.*\)*\.crt"
     vault_regex=".*/\(.*_\)*$(echo "$realm")_datavault\(_.*\)*\.crt"
     issuing_regex=".*/\(.*_\)*$(echo "$realm")_issuing_ca\(_.*\)*\.crt"
+
+    vault_cert_location="global"
     # start import process for detected root/vault/signing certificates
     for f in $(find "$realm_dir" -mindepth 1 -maxdepth 1 -type f -regextype sed -iregex "$root_regex"); do
-      import_cert "$realm" "$f" "root" "$realm_certificate_list"
+      import_cert "$realm" "$f" "root"
     done
     for f in $(find "$realm_dir" -mindepth 1 -maxdepth 1 -type f -regextype sed -iregex "$vault_regex"); do
-      import_cert "$realm" "$f" "vault" "$realm_certificate_list"
+      import_cert "$realm" "$f" "vault"
+      vault_cert_location="local"
     done
+
+    # if no local datavault certificate/key was found: look for global cert/key in ../
+    if [ "$vault_cert_location" = "global" ]; then
+      echo "searching for global vault certificate"
+      for f in $(find "$BASE_PATH" -mindepth 1 -maxdepth 1 -type f -regextype sed -iregex "$vault_regex"); do
+        key_file="$BASE_PATH/$(basename "$f" .crt).pem"
+        if [ -f "$key_file" ]; then
+          # import vault certificate globally
+          openxpkiadm certificate import --file "$f"
+          #set realm alias
+          vault_identifer="$(openxpkiadm certificate id --file "$f")"
+          openxpkiadm alias --realm "$realm" --token datasafe --identifier $vault_identifer
+          #get alias name for imported certificate
+          vault_alias=""
+          alias_for_identifier "$realm" "$vault_identifer" vault_alias
+          #copy vault key to realm folder (otherwise openxpki can not find it)
+          cp "$key_file" "$BASE_PATH/$vault_alias.pem"
+        else
+          echo "IGNORING $(basename "$f"): No matching key file exists"
+        fi
+      done
+    fi
     for f in $(find "$realm_dir" -mindepth 1 -maxdepth 1 -type f -regextype sed -iregex "$issuing_regex"); do
-      import_cert "$realm" "$f" "signer" "$realm_certificate_list"
+      import_cert "$realm" "$f" "signer"
     done
+
   else
     echo "IGNORING directory $realm ..."
   fi
