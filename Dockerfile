@@ -12,12 +12,13 @@ RUN wget https://packages.openxpki.org/v3/debian/Release.key -O - | apt-key add 
 RUN apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver libcrypt-libscep-perl libscep 
 RUN apt-get clean
 RUN ln -s /etc/openxpki/contrib/apache2-openxpki.conf /etc/apache2/conf-enabled/
-# TODO: Replace conf with site and enable ssl, need to create a webserver cert on startup
-# RUN a2dissite 000-default
-# RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-enabled/
-RUN a2enmod cgid fcgid headers rewrite #ssl
+RUN a2dissite 000-default
+RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-enabled/
+RUN a2enmod cgid fcgid headers rewrite ssl
 COPY startup.sh /usr/bin/startup
 RUN chmod +x /usr/bin/startup
+COPY start-apache.sh /usr/bin/start-apache
+RUN chmod +x /usr/bin/start-apache
 
 VOLUME /var/log/openxpki /etc/openxpki
 

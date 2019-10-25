@@ -28,7 +28,7 @@ services:
   openxpki-client:
 #    restart: always
     image: whiterabbitsecurity/openxpki3
-    command: bash -c "rm -f /run/apache2/apache2.pid;/usr/sbin/apache2ctl -D FOREGROUND"
+    command: /usr/bin/start-apache
     ports:
       - "8080:80/tcp"
       - "8443:443/tcp"
