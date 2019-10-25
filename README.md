@@ -19,7 +19,7 @@ This will expose the OpenXPKI WebUI via `http://localhost:8080` (**unencrypted**
 
 ## Prebuild images
 
-Prebuild images for the official releases are provided by WhiteRabbitSecurity via a public Docker repository `whiterabbitsecurity/openxpki`. 
+Prebuild images for the official releases are provided by WhiteRabbitSecurity via a public Docker repository `whiterabbitsecurity/openxpki3`. 
 
 Those are also used by the docker-compose file.
 
@@ -39,7 +39,7 @@ The container runs only the OpenXPKI daemon but not the WebUI frontend. You can 
 
 ## Automatic import of certificates
 
-On startup, new certificates and matching keys get imported if they are placed in `openxpki-config/ca/[REALM]/` and file names match one of the following patterns (case insensitive):
+If you start the container using the provider startup.sh script, new certificates and matching keys get imported if they are placed in `openxpki-config/ca/[REALM]/` and file names match one of the following patterns (case insensitive):
 
 `[...]_[REALM]_ROOT_CA[_[...]].crt` for root certificates
 `[...]_[REALM]_ISSUING_CA[_[...]].crt` for signer certificates
