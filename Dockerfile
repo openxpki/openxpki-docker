@@ -7,11 +7,9 @@ RUN apt-get update && \
     apt-get install --assume-yes gpg libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && dpkg-reconfigure --frontend=noninteractive locales
-# Work around a bug in the debian package postinstall
-RUN mkdir -p /etc/openxpki/ca/ 
 RUN wget https://packages.openxpki.org/v3/debian/openxpki.list -O /etc/apt/sources.list.d/openxpki.list
 RUN wget https://packages.openxpki.org/v3/debian/Release.key -O - | apt-key add -
-RUN (apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver || /bin/true)
+RUN apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver libcrypt-libscep-perl libscep 
 RUN apt-get clean
 RUN ln -s /etc/openxpki/contrib/apache2-openxpki.conf /etc/apache2/conf-enabled/
 # TODO: Replace conf with site and enable ssl, need to create a webserver cert on startup
