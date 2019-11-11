@@ -8,10 +8,10 @@ SSL_CERT_FILE="$SSL_BASE_CRT_DIR/openxpki.crt"
 SSL_KEY_FILE="$SSL_BASE_KEY_DIR/openxpki.key"
 
 # subj for self-signed certificate
-CERT_SUBJ="/CN=TEST"
+CERT_SUBJ="/CN=OpenXPKI Test"
 # host names:
 DNS1="DNS.1 = localhost"
-DNS2=""
+DNS2="DNS.2 = openxpki"
 DNS3=""
 
 # cleanup pid file for apache
@@ -26,7 +26,7 @@ chmod 0777 "$CONFIG_CERT_PATH"
 # handle cert file: check if corresponding key file exists and copy certificate+key to the right places
 function handle_cert_file() {
     cert_file=$1
-    key_file="$CONFIG_CERT_PATH/$(basename $cert_file .crt).pem"
+    key_file="$(dirname $cert_file)/$(basename $cert_file .crt).pem"
     if [ -f "$key_file" ]; then
       # copy certificate and keys to apache directories
       echo "using certificate '$cert_file' with key '$key_file' for apache"
@@ -49,16 +49,19 @@ function generate_self_signed (){
   TMP_FILE="/tmp/self-signed.cnf"
   echo "authorityKeyIdentifier=keyid,issuer
   basicConstraints=CA:FALSE
-  distinguished_name  = subject
+  distinguished_name = subject
   keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+  [ req_san ]
   subjectAltName = @alt_names
-  [subject]
-  [alt_names]
+  [ subject ]
+  CN=OpenXPKI Test
+  [ alt_names ]
   $DNS1
   $DNS2
   $DNS3
   " > "$TMP_FILE"
-  openssl req -config "$TMP_FILE" -new -x509 -sha256 -newkey rsa:2048 -nodes -keyout "$CONFIG_CERT_PATH/self-signed.pem" -subj "$CERT_SUBJ" -days 365 -out  "$CONFIG_CERT_PATH/self-signed.crt"
+  openssl req -config "$TMP_FILE" -extensions req_san -new -x509 -sha256 -newkey rsa:2048 -nodes -keyout "/tmp/self-signed.pem" -subj "$CERT_SUBJ" -days 365 -out  "/tmp/self-signed.crt"
+  handle_cert_file /tmp/self-signed.crt
 }
 
 # count available certificate files
@@ -68,8 +71,6 @@ if [ $crt_count != 1 ]; then
     #no certificate available -> generate one
     echo "No certificate found, generating self-signed"
     generate_self_signed
-    #now one certificate is available -> use it
-    handle_cert_files
   else
     # multiple certificates available -> exit
     echo "[ERROR] Found too much($crt_count) possible SSL certificates, expected 1"

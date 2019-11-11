@@ -17,7 +17,7 @@ RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-en
 RUN a2enmod cgid fcgid headers rewrite ssl
 COPY bin/setup-cert.sh /usr/bin/setup-cert
 RUN chmod +x /usr/bin/setup-cert
-COPY start-apache.sh /usr/bin/start-apache
+COPY bin/start-apache.sh /usr/bin/start-apache
 RUN chmod +x /usr/bin/start-apache
 
 VOLUME /var/log/openxpki /etc/openxpki
