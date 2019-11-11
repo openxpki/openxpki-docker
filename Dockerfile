@@ -4,7 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG OPENXPKI_NOCONFIG=1
 
 RUN apt-get update && \
-    apt-get install --assume-yes gpg libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less
+    apt-get install --assume-yes gpg libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less gettext
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && dpkg-reconfigure --frontend=noninteractive locales
 RUN wget https://packages.openxpki.org/v3/debian/openxpki.list -O /etc/apt/sources.list.d/openxpki.list
@@ -19,6 +19,8 @@ COPY bin/setup-cert.sh /usr/bin/setup-cert
 RUN chmod +x /usr/bin/setup-cert
 COPY bin/start-apache.sh /usr/bin/start-apache
 RUN chmod +x /usr/bin/start-apache
+COPY bin/update-i18n.sh /usr/bin/update-i18n
+RUN chmod +x /usr/bin/update-i18n
 
 VOLUME /var/log/openxpki /etc/openxpki
 

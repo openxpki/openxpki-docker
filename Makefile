@@ -2,6 +2,9 @@ help:
 	@grep '^[a-zA-Z]' $(MAKEFILE_LIST) | awk -F ':.*?## ' 'NF==2 {printf "  %-26s%s\n", $$1, $$2}'
 
 build:  ## rebuild openxpki image using Dockerfile
+	docker build -t whiterabbitsecurity/openxpki3 . 
+
+build-nocache:  ## rebuild openxpki image using Dockerfile
 	docker build --no-cache -t whiterabbitsecurity/openxpki3 . 
 
 prune:  ## prune unused images (all!)
