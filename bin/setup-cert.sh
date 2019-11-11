@@ -97,15 +97,8 @@ function do_realm_dir() {
     echo "IGNORING directory $realm ..."
   fi
 }
-# enable monitor, then start openxpki server (without forking) and put it to background
-# this is necessary as openxpkicli requires a running openxpki instance
-set -m
-/usr/bin/openxpkictl start --no-detach &
-# time for openxpki to initialize
-sleep 10
+
 #look for realm folders and export contained certificates
 for D in $(find "$BASE_PATH" -mindepth 1 -maxdepth 1 -type d); do
   do_realm_dir "$D"
 done
-#after certificates have been imported put openxpki in foreground again
-fg %1

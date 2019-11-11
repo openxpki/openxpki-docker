@@ -15,8 +15,8 @@ RUN ln -s /etc/openxpki/contrib/apache2-openxpki.conf /etc/apache2/conf-enabled/
 RUN a2dissite 000-default
 RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-enabled/
 RUN a2enmod cgid fcgid headers rewrite ssl
-COPY startup.sh /usr/bin/startup
-RUN chmod +x /usr/bin/startup
+COPY bin/setup-cert.sh /usr/bin/setup-cert
+RUN chmod +x /usr/bin/setup-cert
 COPY start-apache.sh /usr/bin/start-apache
 RUN chmod +x /usr/bin/start-apache
 
