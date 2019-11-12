@@ -15,7 +15,7 @@ $ git clone https://github.com/openxpki/openxpki-config.git --branch=docker
 $ docker-compose  up 
 ```
 
-This will expose the OpenXPKI WebUI via `http://localhost:8080` (**unencrypted**!) with the sample configuration but without any tokens. Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates.
+If you dont provide a TLS certificate for the webserver yourself (see below), the init script creates a self-signed one and exposes the webserver UI on port 8443 (`https://localhost:8443`). The SCEP and RPC interface is available via plain HTTP on port 8080 (`http://localhost:8080`). The system is started with the configuration found in the openxpki-config path, without tokens installed! Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates.
 
 ## Prebuilt images
 
