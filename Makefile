@@ -24,5 +24,7 @@ clean:  ## remove containers but keep volumes
 
 purge:	clean  ## remove containers and volumes
 	docker volume rm openxpki-docker_openxpkidb openxpki-docker_openxpkilog openxpki-docker_openxpkisocket || /bin/true
+
+purge-all: purge
 	rm -rf openxpki-config
 

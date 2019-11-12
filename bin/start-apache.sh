@@ -17,16 +17,13 @@ DNS3=""
 # cleanup pid file for apache
 rm -f /run/apache2/apache2.pid
 
-#make sure all directories exist
-mkdir -p "$SSL_BASE_CRT_DIR"
-mkdir -p "$SSL_BASE_KEY_DIR"
-mkdir -p "$CONFIG_CERT_PATH"
-chmod 0777 "$CONFIG_CERT_PATH"
-
 # handle cert file: check if corresponding key file exists and copy certificate+key to the right places
 function handle_cert_file() {
     cert_file=$1
     key_file="$(dirname $cert_file)/$(basename $cert_file .crt).pem"
+    # make sure all directories exist
+    mkdir -p "$SSL_BASE_CRT_DIR"
+    mkdir -p "$SSL_BASE_KEY_DIR"
     if [ -f "$key_file" ]; then
       # copy certificate and keys to apache directories
       echo "using certificate '$cert_file' with key '$key_file' for apache"
@@ -65,12 +62,18 @@ function generate_self_signed (){
 }
 
 # count available certificate files
-crt_count="$(find "$CONFIG_CERT_PATH" -mindepth 1 -maxdepth 1 -type f -regextype sed -iregex ".*\.crt" | wc -l)"
+if [ -d "$CONFIG_CERT_PATH" ]; then
+    crt_count="$(find "$CONFIG_CERT_PATH" -mindepth 1 -maxdepth 1 -type f -regextype sed -iregex ".*\.crt" | wc -l)"
+else
+    crt_count=0
+fi
 if [ $crt_count != 1 ]; then
   if [ $crt_count = 0 ]; then
-    #no certificate available -> generate one
-    echo "No certificate found, generating self-signed"
-    generate_self_signed
+    # nothing to import, check if there is already one
+    if [ ! -e "$SSL_CERT_FILE" ] || [ ! -f "$SSL_KEY_FILE" ]; then
+        echo "No certificate found, generating self-signed"
+        generate_self_signed
+    fi
   else
     # multiple certificates available -> exit
     echo "[ERROR] Found too much($crt_count) possible SSL certificates, expected 1"
