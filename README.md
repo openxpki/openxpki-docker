@@ -15,7 +15,7 @@ $ git clone https://github.com/openxpki/openxpki-config.git --branch=docker
 $ docker-compose  up 
 ```
 
-This will expose the OpenXPKI WebUI via `http://localhost:8080` (**unencrypted**!) with the sample configuration but without any tokens. Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates.
+This will expose the OpenXPKI WebUI via `https://localhost:8443` with the sample configuration but without any tokens. Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates.
 
 ## Prebuilt images
 
