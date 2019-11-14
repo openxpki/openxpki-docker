@@ -35,7 +35,7 @@ function import_cert() {
         #move keyfile to the right place so that it can be found by openxpki
         alias=""
         alias_for_identifier "$realm" "$identifier" alias
-        cp "$key_file" "$BASE_PATH/$realm/$alias.pem"
+        cp -n "$key_file" "$BASE_PATH/$realm/$alias.pem"
       fi
   fi
 
@@ -65,7 +65,7 @@ function do_realm_dir() {
             openxpkiadm alias --realm "$realm" --token datasafe --identifier "$vault_identifier"
             alias=""
             alias_for_identifier "$realm" "$identifier" alias
-            cp "$key_file" "$BASE_PATH/$alias.pem"
+            cp -n "$key_file" "$BASE_PATH/$alias.pem"
           fi
         else
           echo "IGNORING $(basename "$f"): No matching key file exists"
