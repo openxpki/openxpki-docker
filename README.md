@@ -43,16 +43,17 @@ The container runs only the OpenXPKI daemon but not the WebUI frontend. You can 
 
 Start the server container and run `setup-cert` to setup the CA certificates and matching keys. The artifacts need to be placed in `openxpki-config/ca/[REALM]/` and file names must match one of the following patterns (case insensitive):
 
-`[...]_[REALM]_ROOT_CA[_[...]].crt` for root certificates
-`[...]_[REALM]_ISSUING_CA[_[...]].crt` for signer certificates
-`[...]_[REALM]_DATAVAULT[_[...]].crt` for vault certificates
+`root(-XX).crt` for root certificates
+`ca-signer(-XX).crt` for signer certificates
+`vault(-XX).crt` for vault certificates
+`scep(-XX).crt` for vault certificates
 
-The corresponding key files must have the same basename with file ending (*.pem)
+The suffix -XX must contain only numbers and is used as generation identifier on import. If the suffix is omitted, the certificate is imported with the next available generation identifier. The corresponding key files must have the same basename with file ending (*.pem), the key file is copied to $alias.pem so it will be found by the default key specification of the sample config (if the file already exists, nothing is copied).
 
 Certificates/keys for data vault can also be placed in `openxpki-config/ca/`. Then, the startup script will detect it and create aliases for all realms.
 
 All key files (except for data vault) are stored in the database so make sure all other tokens (e.g. certsign) are configured correctly:
-```
+```yaml
     key_store: DATAPOOL
     key: "[% ALIAS %]"
 ```
@@ -61,4 +62,5 @@ All key files (except for data vault) are stored in the database so make sure al
 
 Translations are done using gettext. By default the container comes with a file that covers translations of the sample config and the backend. If you need to modify or extend the translations, you must generate your own po file.
 
-Create a folder `openxpki-config/i18n/en_US` and place your overrides/extensions in one or muliple files ending with `.po`. When you need to update the internal translations, either create a file `openxpki-config/i18n/.update` (can be empty) or run `update-i18n` inside the container. The script will merge the contents of `contrib/i18n/` with your local extensions, so make sure you update this when you install a new release. You need to restart the client container afterwards to pull in the new translation file.
+Create a folder `openxpki-config/i18n/en_US` and place your overrides/extensions in one or muliple files ending with `.po`. When you need to update the internal translations, either create a file `openxpki-config/i18n/.update` (can be empty) or run `update-i18n` inside the **client** container. The script will merge the contents of `contrib/i18n/` with your local extensions, so make sure you update this when you install a new release. You need to restart the client container afterwards to pull in the new translation file.
+
