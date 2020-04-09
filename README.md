@@ -2,7 +2,7 @@
 
 ## Using Docker Compose
 
-The provided docker-compose provided creates three containers:
+The provided docker-compose creates three containers:
 
 - Database (based on mysql:5.7)
 - OpenXPKI Server
@@ -19,7 +19,7 @@ If you don't provide a TLS certificate for the webserver yourself (see below), t
 
 The system is started with the configuration found in the openxpki-config path, **but without any tokens installed**! Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates (*there is also a helper script for importing the keys, see below*).
 
-If you want to setup a two-tier hierarchy we recommend using the our command line ca tool `clca` (https://github.com/openxpki/clca).
+If you want to setup a two-tier hierarchy we recommend using our command line ca tool `clca` (https://github.com/openxpki/clca).
 
 ## Prebuilt images
 
