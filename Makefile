@@ -1,10 +1,12 @@
 DOCKER_DIR=$(shell basename $(dir $$PWD/.))
 IMAGE = whiterabbitsecurity/openxpki3
+export COMPOSE_PROJECT_NAME=openxpki
 
 -include Makefile.local
 
 help:
 	@grep '^[a-zA-Z]' $(MAKEFILE_LIST) | awk -F ':.*?## ' 'NF==2 {printf "  %-26s%s\n", $$1, $$2}'
+
 test:
 	$(info $(DOCKER_DIR))
 
@@ -27,10 +29,10 @@ compose: openxpki-config  ## call docker-compose, implies init
 
 clean:  ## remove containers but keep volumes
 	docker-compose stop || /bin/true
-	docker rm $(DOCKER_DIR)_openxpki-client_1 $(DOCKER_DIR)_openxpki-server_1 $(DOCKER_DIR)_db_1 || /bin/true
+	docker rm $(COMPOSE_PROJECT_NAME)_openxpki-client_1 $(COMPOSE_PROJECT_NAME)_openxpki-server_1 $(COMPOSE_PROJECT_NAME)_db_1 || /bin/true
 
 purge:	clean  ## remove containers and volumes
-	docker volume rm $(DOCKER_DIR)_openxpkidb $(DOCKER_DIR)_openxpkilog $(DOCKER_DIR)_openxpkisocket || /bin/true
+	docker volume rm $(COMPOSE_PROJECT_NAME)_openxpkidb $(COMPOSE_PROJECT_NAME)_openxpkilog $(COMPOSE_PROJECT_NAME)_openxpkisocket || /bin/true
 
 purge-all: purge
 	rm -rf openxpki-config
