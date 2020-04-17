@@ -3,7 +3,7 @@ version: "3"
 services:
   db:
 #    restart: always
-    image: mysql:5.7
+    image: mariadb:10
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - openxpkidb:/var/lib/mysql
