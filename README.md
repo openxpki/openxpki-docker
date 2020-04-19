@@ -4,7 +4,7 @@
 
 The provided docker-compose creates three containers:
 
-- Database (based on mysql:5.7)
+- Database (based on mariadb:10)
 - OpenXPKI Server
 - OpenXPKI WebUI
 
