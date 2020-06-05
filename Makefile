@@ -22,9 +22,10 @@ prune:  ## prune unused images (all!)
 init: openxpki-config  ## clone initial config from github
 
 openxpki-config:
-	git clone  https://github.com/openxpki/openxpki-config --single-branch --branch=docker
+	git clone  https://github.com/openxpki/openxpki-config --single-branch --branch=develop
 
 compose: openxpki-config  ## call docker-compose, implies init
+	cp -n local.yaml openxpki-config/config.d/local.yaml
 	docker-compose up
 
 clean:  ## remove containers but keep volumes

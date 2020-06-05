@@ -1,0 +1,6 @@
+system:
+    database:
+        main:
+            wait_on_init:
+                retry_count: 10
+                retry_interval: 30

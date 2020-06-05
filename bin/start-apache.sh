@@ -1,11 +1,14 @@
 #!/bin/bash
 CONFIG_CERT_PATH="/etc/openxpki/contrib/https"
 
-SSL_BASE_CRT_DIR=/etc/apache2/ssl.crt
-SSL_BASE_KEY_DIR=/etc/apache2/ssl.key
+SSL_BASE_CRT_DIR=/etc/openxpki/tls/endentity
+SSL_BASE_KEY_DIR=/etc/openxpki/tls/private
+
 
 SSL_CERT_FILE="$SSL_BASE_CRT_DIR/openxpki.crt"
-SSL_KEY_FILE="$SSL_BASE_KEY_DIR/openxpki.key"
+SSL_KEY_FILE="$SSL_BASE_KEY_DIR/openxpki.pem"
+
+SSL_CA_PATH=/etc/openxpki/tls/chain/
 
 # subj for self-signed certificate
 CERT_SUBJ="/CN=OpenXPKI Test"
@@ -84,6 +87,10 @@ else
   handle_cert_files
 fi
 
+
+mkdir -p "$SSL_CA_PATH"
+cp $SSL_CERT_FILE $SSL_CA_PATH/self-signed.crt
+c_rehash $SSL_CA_PATH
 # check if i18n update is requested
 test -e /etc/openxpki/i18n/.update && /usr/bin/update-i18n && rm -f /etc/openxpki/i18n/.update
 
