@@ -15,7 +15,6 @@ RUN apt-get clean
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 VOLUME /var/log/openxpki /etc/openxpki
 WORKDIR /var/log/openxpki/
-RUN ln -s /etc/openxpki/contrib/apache2-openxpki.conf /etc/apache2/conf-enabled/
 RUN a2dissite 000-default; a2disconf serve-cgi-bin
 RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-enabled/
 RUN a2enmod cgid fcgid headers rewrite ssl
