@@ -12,6 +12,9 @@ RUN wget https://packages.openxpki.org/v3/debian/Release.key -O - | apt-key add 
 RUN apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver libcrypt-libscep-perl libscep
 RUN apt-get clean
 
+# Hack to run rhel/sles configs in this container
+RUN /usr/bin/id -u www-data | xargs /usr/sbin/useradd apache -s /usr/sbin/nologin -b /var/www -g www-data -o -u
+
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 VOLUME /var/log/openxpki /etc/openxpki
 WORKDIR /var/log/openxpki/
