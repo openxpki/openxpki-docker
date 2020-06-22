@@ -5,7 +5,7 @@ export COMPOSE_PROJECT_NAME=openxpki
 -include Makefile.local
 
 help:
-	@grep '^[a-zA-Z]' $(MAKEFILE_LIST) | awk -F ':.*?## ' 'NF==2 {printf "  %-26s%s\n", $$1, $$2}'
+	@grep '^[a-zA-Z]' Makefile | sort | awk -F ':.*?## ' 'NF==2 {printf "  %-26s%s\n", $$1, $$2}'
 
 test:
 	$(info $(DOCKER_DIR))
