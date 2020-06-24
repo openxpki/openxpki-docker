@@ -21,6 +21,15 @@ The system is started with the configuration found in the openxpki-config path, 
 
 If you want to setup a two-tier hierarchy we recommend using our command line ca tool `clca` (https://github.com/openxpki/clca).
 
+#### Running on SELinux
+
+Some distros, e.g. CentOS/RHEL, have SELinux enabled by default which will likely prevent the docker container to read the mounted config volume. You can work around this by adding a `:z` to the volume path in the docker-compose.yml - please read https://github.com/moby/moby/issues/30934 **before** doing so as it can make your system unusable!
+
+```yaml
+volumes:
+  - ./openxpki-config:/etc/openxpki:z
+```
+
 ## Prebuilt images
 
 Prebuilt images for the official releases are provided by WhiteRabbitSecurity via a public Docker repository `whiterabbitsecurity/openxpki3`. 
