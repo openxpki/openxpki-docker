@@ -1,11 +1,8 @@
 #!/bin/bash
 CONFIG_CERT_PATH="/etc/openxpki/contrib/https"
 
-SSL_BASE_CRT_DIR=/etc/apache2/ssl.crt
-SSL_BASE_KEY_DIR=/etc/apache2/ssl.key
-
-SSL_CERT_FILE="$SSL_BASE_CRT_DIR/openxpki.crt"
-SSL_KEY_FILE="$SSL_BASE_KEY_DIR/openxpki.key"
+SSL_CERT_FILE="/etc/openxpki/tls/endentity/openxpki.crt"
+SSL_KEY_FILE="/etc/openxpki/tls/private/openxpki.pem"
 
 # subj for self-signed certificate
 CERT_SUBJ="/CN=OpenXPKI Test"
@@ -22,8 +19,8 @@ function handle_cert_file() {
     cert_file=$1
     key_file="$(dirname $cert_file)/$(basename $cert_file .crt).pem"
     # make sure all directories exist
-    mkdir -p "$SSL_BASE_CRT_DIR"
-    mkdir -p "$SSL_BASE_KEY_DIR"
+    mkdir -p `dirname "$SSL_CERT_FILE"`
+    mkdir -p `dirname "$SSL_KEY_FILE"`
     if [ -f "$key_file" ]; then
       # copy certificate and keys to apache directories
       echo "using certificate '$cert_file' with key '$key_file' for apache"
@@ -83,6 +80,12 @@ else
   #exactly one certificate found -> use it
   handle_cert_files
 fi
+
+if [ ! -d /etc/openxpki/tls/chain/ ]; then
+    mkdir -p /etc/openxpki/tls/chain/
+    openssl req -x509 -keyout /dev/null -subj "/CN=Placeholder for TLS Client Auth" -newkey rsa:2048 -nodes -out /etc/openxpki/tls/chain/dummy.crt
+    c_rehash /etc/openxpki/tls/chain/
+fi;
 
 # check if i18n update is requested
 test -e /etc/openxpki/i18n/.update && /usr/bin/update-i18n && rm -f /etc/openxpki/i18n/.update

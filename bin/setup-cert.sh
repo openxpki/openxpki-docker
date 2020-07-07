@@ -80,7 +80,11 @@ function do_realm_dir() {
         echo "importing root"
         openxpkiadm certificate import --file "$f"
       fi
+      # add all roots to the tls chain
+      chainfile="/etc/openxpki/tls/chain/$root_identifer.crt"
+      -e $chainfile || cp $f $chainfile
     done
+    c_rehash /etc/openxpki/tls/chain/
     #generic import of certsign/scep tokens
     for f in $(find "$realm_dir" -mindepth 1 -maxdepth 1 -type f -regextype sed -iregex "$scep_regex"); do
       import_cert "$realm" "$f" "scep"
