@@ -8,12 +8,27 @@ The provided docker-compose creates three containers:
 - OpenXPKI Server
 - OpenXPKI WebUI
 
-Before running compose you **MUST** place a configuration directory named `openxpki-config` in the current directory, the easiest way is to clone the branch `docker` from the `openxpki-config` repository at github.
+Before running compose you **MUST** place a configuration directory named `openxpki-config` in the current directory, the easiest way is to clone the branch `community` from the `openxpki-config` repository at github.
 
 ```bash
-$ git clone https://github.com/openxpki/openxpki-config.git --branch=docker
-$ docker-compose  up 
+$ git clone https://github.com/openxpki/openxpki-config.git \
+	--single-branch --branch=community
 ```
+
+The default configuration expects the database to be available at server startup which might not be the case when using docker, especially on the first start when the database needs to be created. To avoid the server to crash when the database is not available you should set `wait_on_init` in `config.d/system/database.yaml`. For a production setup you should place this into your main configuration but for a test drive you can use the provided overlay file:
+
+```bash
+# Create config overlay file to let OpenXPKI wait for the database
+$ cp contrib/wait_on_init.yaml  openxpki-config/config.d/system/local.yaml
+```
+
+Now run docker-compose:
+
+```bash
+$ docker-compose up
+```
+
+In case you have `make` installed you can also just run `make compose` which does all the above for you.
 
 If you don't provide a TLS certificate for the webserver yourself (see below), the init script creates a self-signed one and exposes the webserver UI on port 8443 (`https://localhost:8443/openxpki/`). The SCEP and RPC interface is available via plain HTTP on port 8080 (`http://localhost:8080`). 
 
