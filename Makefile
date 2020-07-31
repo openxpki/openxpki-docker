@@ -28,6 +28,15 @@ openxpki-config:
 compose: openxpki-config  ## call docker-compose, implies init
 	docker-compose up
 
+sample-config: ## run the sampleconfig script from contrib/ 
+	docker exec -it $(shell docker ps -aqf "name=${COMPOSE_PROJECT_NAME}_openxpki-server_1") /bin/bash /etc/openxpki/contrib/sampleconfig.sh
+
+restart-client: ## restart the client container
+	docker restart ${COMPOSE_PROJECT_NAME}_openxpki-client_1
+
+restart-server: ## restart the server container
+	docker restart ${COMPOSE_PROJECT_NAME}_openxpki-server_1
+
 clean:  ## remove containers but keep volumes
 	docker-compose stop || /bin/true
 	docker rm $(COMPOSE_PROJECT_NAME)_openxpki-client_1 $(COMPOSE_PROJECT_NAME)_openxpki-server_1 $(COMPOSE_PROJECT_NAME)_db_1 || /bin/true

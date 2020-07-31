@@ -34,6 +34,8 @@ If you don't provide a TLS certificate for the webserver yourself (see below), t
 
 The system is started with the configuration found in the openxpki-config path, **but without any tokens installed**! Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates (*there is also a helper script for importing the keys, see below*).
 
+For a test-drive you can call `make sample-config` which will execute `contrib/sampleconfig.sh` from the mounted configuration repository.
+
 If you want to setup a two-tier hierarchy we recommend using our command line ca tool `clca` (https://github.com/openxpki/clca).
 
 #### Running on SELinux
