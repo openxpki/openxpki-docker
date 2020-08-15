@@ -82,7 +82,7 @@ function do_realm_dir() {
       fi
       # add all roots to the tls chain
       chainfile="/etc/openxpki/tls/chain/$root_identifer.crt"
-      -e $chainfile || cp $f $chainfile
+      test -e $chainfile || cp $f $chainfile
     done
     c_rehash /etc/openxpki/tls/chain/
     #generic import of certsign/scep tokens
