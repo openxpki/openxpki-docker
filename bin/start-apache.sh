@@ -90,5 +90,8 @@ fi;
 # check if i18n update is requested
 test -e /etc/openxpki/i18n/.update && /usr/bin/update-i18n && rm -f /etc/openxpki/i18n/.update
 
+# avoid permission problems with the log volume 
+chmod 4777 /var/log/openxpki
+
 # finally: start apache
 /usr/sbin/apache2ctl -D FOREGROUND

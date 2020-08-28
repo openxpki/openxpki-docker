@@ -38,6 +38,10 @@ For a test-drive you can call `make sample-config` which will execute `contrib/s
 
 If you want to setup a two-tier hierarchy we recommend using our command line ca tool `clca` (https://github.com/openxpki/clca).
 
+### Troubleshooting
+
+In case the WebUI does not start or you get a 500 Server Error when calling the RPC/SCEP/EST wrappers the most common problem are broken permissions on the log folder/files `/var/log/openxpki`. Running `docker exec -ti openxpki_openxpki-client_1 chmod 4777 /var/log/openxpki` will make the folder world writable so the problem should be gone.
+
 #### Running on SELinux
 
 Some distros, e.g. CentOS/RHEL, have SELinux enabled by default which will likely prevent the docker container to read the mounted config volume. You can work around this by adding a `:z` to the volume path in the docker-compose.yml - please read https://github.com/moby/moby/issues/30934 **before** doing so as it can make your system unusable!
@@ -46,6 +50,13 @@ Some distros, e.g. CentOS/RHEL, have SELinux enabled by default which will likel
 volumes:
   - ./openxpki-config:/etc/openxpki:z
 ```
+#### Running on Windows
+
+The sample configuration uses a so called symlink to a template directory to create the "democa". Windows does not support symlinks and when you clone 
+and mount the repository from a host running windows this configuration is missing. If you get `No workflow configuration found for current realm` 
+when starting OpenXPKI try to replace the (broken) symlink in openxpki-config/config.d/realm by a full copy.
+
+Another option is to activate symlink emulation in git, see https://github.com/git-for-windows/git/wiki/Symbolic-Links.
 
 ## Prebuilt images
 
