@@ -26,19 +26,37 @@ Now run docker-compose:
 
 ```bash
 $ docker-compose up
+
+# provisioning takes about a minute and you will see some warnings while
+# OpenXPKI waits for the database, before you proceed please wait until you see
+openxpki-server_1  | Binding to UNIX socket file "/var/openxpki/openxpki.socket"
+openxpki-server_1  | Group Not Defined.  Defaulting to EGID '0'
+openxpki-server_1  | User Not Defined.  Defaulting to EUID '0'
+openxpki-server_1  | Setting gid to "102"
+openxpki-server_1  | Setting uid to "101"
 ```
 
 In case you have `make` installed you can also just run `make compose` which does all the above for you.
 
-If you don't provide a TLS certificate for the webserver yourself (see below), the init script creates a self-signed one and exposes the webserver UI on port 8443 (`https://localhost:8443/openxpki/`). The SCEP and RPC interface is available via plain HTTP on port 8080 (`http://localhost:8080`). 
+If you don't provide a TLS certificate for the webserver yourself (see below), the init script creates a self-signed one and exposes the webserver UI on port 8443 (`https://localhost:8443/openxpki/`). The SCEP interface is available via plain HTTP on port 8080 (`http://localhost:8080`).
 
 The system is started with the configuration found in the openxpki-config path, **but without any tokens installed**! Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates (*there is also a helper script for importing the keys, see below*).
 
-For a test-drive you can call `make sample-config` which will execute `contrib/sampleconfig.sh` from the mounted configuration repository.
-
 If you want to setup a two-tier hierarchy we recommend using our command line ca tool `clca` (https://github.com/openxpki/clca).
 
+##### Testdrive
+
+The repository comes with a bootstrap script, that generates a two-tier PKI hierarchy and prepares anything "ready-to-go".
+
+```bash
+$ docker exec -it openxpki_openxpki-server_1 /bin/bash /etc/openxpki/contrib/sampleconfig.sh
+```
+
+If you have `make` installed, just run `make sample-config` which will run the above command for you.
+
 ### Troubleshooting
+
+#### 500 Server Error / No WebUI
 
 In case the WebUI does not start or you get a 500 Server Error when calling the RPC/SCEP/EST wrappers the most common problem are broken permissions on the log folder/files `/var/log/openxpki`. Running `docker exec -ti openxpki_openxpki-client_1 chmod 4777 /var/log/openxpki` will make the folder world writable so the problem should be gone.
 

@@ -19,7 +19,9 @@ ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 VOLUME /var/log/openxpki /etc/openxpki
 WORKDIR /var/log/openxpki/
 RUN a2dissite 000-default; a2disconf serve-cgi-bin
-RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-enabled/
+# look alike for the default apache setup from postinst to let a2ensite openxpki work
+RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-available/openxpki.conf
+RUN ln -s ../sites-available/openxpki.conf /etc/apache2/sites-enabled/ 
 RUN a2enmod cgid fcgid headers rewrite ssl
 COPY bin/setup-cert.sh /usr/bin/setup-cert
 RUN chmod +x /usr/bin/setup-cert
