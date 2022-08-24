@@ -24,6 +24,7 @@ services:
       - openxpkilog:/var/log/openxpki
       - openxpkisocket:/var/openxpki/
       - openxpkidbsocket:/var/run/mysqld/
+      - openxpkidownload:/var/www/download/
       # this will not work on all OS
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
@@ -42,6 +43,7 @@ services:
       - openxpkilog:/var/log/openxpki
       - openxpkisocket:/var/openxpki/
       - openxpkidbsocket:/var/run/mysqld/
+      - openxpkidownload:/var/www/download/
     depends_on:
         - openxpki-server
 
@@ -50,4 +52,5 @@ volumes:
   openxpkisocket:
   openxpkidbsocket:
   openxpkilog:
+  openxpkidownload:
 
