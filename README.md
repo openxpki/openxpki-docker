@@ -84,7 +84,7 @@ Those are also used by the docker-compose file.
 
 ## Building your own images
 
-The Dockerfile creates a container based on Debian Jessie using prebuilt deb packages which are downloaded from the OpenXPKI package mirror (https://packages.openxpki.org).
+The Dockerfile creates a container based on Debian Buster using prebuilt deb packages which are downloaded from the OpenXPKI package mirror (https://packages.openxpki.org).
 
 The image has all code components installed but comes without any configuration.
 
