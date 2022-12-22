@@ -1,0 +1,12 @@
+# The content of this file should be written/updated by your own config
+# management tools - you can extend the file with your own attributes all
+# values are listed on the system status page and are returned via
+# "openxpkicli version" call
+config: 3.18
+api: 3.18
+commit: ~
+
+# this was introduced with v3.12 and will prevent the system to start
+# if the used application version is older
+depend:
+  core: 3.18

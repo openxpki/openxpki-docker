@@ -1,0 +1,37 @@
+# GetNextCA expects the new root certificates as a PKCS7 degenerated
+# certifiate only structure embeded as payload into a PKCS7 signed
+# message with the current (root) CA as signer. You must create this
+# structure yourself and store it in the referenced datapool item in
+# base64 encoded DER format.
+
+head:
+    prefix: scepnextca
+    persister: Volatile
+
+state:
+    INITIAL:
+        action: initialize > SUCCESS
+
+    SUCCESS: ~
+
+action:
+    initialize:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::Datapool::GetEntry
+        input:
+          - interface
+          - server
+        param:
+            namespace: scep.nextca
+            key: default
+            target_key: output
+
+acl:
+    System:
+        creator: any
+        context: 1
+
+    RA Operator:
+        creator: any
+        context: 1
+
+

@@ -1,0 +1,3 @@
+class: OpenXPKI::Server::Workflow::Condition::Connector::Exists
+param:
+    _map_config_path: "[% context.interface %].[% context.server %].authorized_signer"

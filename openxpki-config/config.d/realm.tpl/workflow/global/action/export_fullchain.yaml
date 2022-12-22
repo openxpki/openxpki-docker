@@ -1,0 +1,5 @@
+class: OpenXPKI::Server::Workflow::Activity::Tools::CertificateExport
+param:
+    _map_cert_identifier: $cert_identifier
+    target_key: chain
+    template: '[% chain.join("\n"); "\n"; ca %]'

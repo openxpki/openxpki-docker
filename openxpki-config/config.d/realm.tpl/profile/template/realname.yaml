@@ -1,0 +1,8 @@
+id: realname
+label: I18N_OPENXPKI_UI_PROFILE_REALNAME
+description: I18N_OPENXPKI_UI_PROFILE_REALNAME_DESC
+type: text
+match: .+
+width: 40
+placeholder: John Doe
+preset: userinfo.realname

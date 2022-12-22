@@ -1,0 +1,128 @@
+head:
+    prefix: motd
+    persister: Volatile
+    label: I18N_OPENXPKI_UI_WF_TYPE_MOTD_LABEL
+
+state:
+    INITIAL:
+        action:
+          - initialize > PERSIST
+
+    PERSIST:
+        autorun: 1
+        action: set_motd > SUCCESS
+
+    SUCCESS:
+        label: I18N_OPENXPKI_UI_WORKFLOW_SET_MOTD_SUCCESS_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_SET_MOTD_SUCCESS_DESCRIPTION
+        output:
+          - message
+          - level
+          - link
+          - role
+          - notafter
+
+action:
+    initialize:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::SetContextHash
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_MOTD_INITIALIZE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_MOTD_INITIALIZE_DESCRIPTION
+        param:
+            target_key: motd
+            _map_message: $message
+            _map_level: $level
+            _map_href: $link
+        input:
+          - message
+          - level
+          - link
+          - role
+          - notafter
+        validator:
+         - full_uri
+         - is_expiry_date_in_future
+
+    set_motd:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::Datapool::SetEntry
+        param:
+            namespace: webui.motd
+            _map_key: $role
+            _map_value: $motd
+            force: 1
+            encrypt: 0
+            serialize: 1
+            _map_expiration_date: $notafter
+
+field:
+    level:
+        name: level
+        label: I18N_OPENXPKI_UI_WORKFLOW_MOTD_FIELD_LEVEL_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_MOTD_FIELD_LEVEL_DESCRIPTION
+        required: 1
+        default: info
+        type: select
+        option:
+            item:
+              - info
+              - success
+              - warn
+              - error
+    message:
+        name: message
+        label: I18N_OPENXPKI_UI_WORKFLOW_MOTD_FIELD_MESSAGE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_MOTD_FIELD_MESSAGE_DESCRIPTION
+        required: 1
+        type: text
+
+    link:
+        name: link
+        label: I18N_OPENXPKI_UI_WORKFLOW_MOTD_LINK_MESSAGE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_MOTD_LINK_MESSAGE_DESCRIPTION
+        placeholder: http://www.openxpki.org/motd
+        required: 0
+        type: text
+
+    role:
+        name: role
+        label: I18N_OPENXPKI_UI_WORKFLOW_MOTD_FIELD_ROLE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_MOTD_FIELD_ROLE_DESCRIPTION
+        required: 1
+        type: select
+        option:
+            item:
+              - _any
+              - User
+              - RA Operator
+
+validator:
+    full_uri:
+        class: OpenXPKI::Server::Workflow::Validator::Regex
+        arg:
+         - $link
+        param:
+            regex: href
+            error: I18N_OPENXPKI_UI_WORKFLOW_MOTD_VALIDATOR_LINK_FAILED
+
+    is_expiry_date_in_future:
+        class: OpenXPKI::Server::Workflow::Validator::ValidityString
+        param:
+            format: detect
+            condition: gte
+            error: I18N_OPENXPKI_UI_WORKFLOW_MOTD_VALIDATOR_EXPIRATION_DATE_FAILED
+        arg:
+         - $notafter
+
+acl:
+    CA Operator:
+        creator: any
+
+    RA Operator:
+        creator: any
+
+    System:
+        creator: any
+        fail: 1
+        resume: 1
+        wakeup: 1
+
+

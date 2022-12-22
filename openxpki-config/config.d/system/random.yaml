@@ -1,0 +1,4 @@
+# socket location to read random from, default is /dev/urandom
+# set to the empty string to always use "openssl rand"
+#socket: 
+#    location: "/dev/urandom"

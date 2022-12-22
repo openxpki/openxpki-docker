@@ -1,0 +1,57 @@
+# Where to publish entity certificates
+entity:
+    ldap@: connector:publishing.connectors.ldap-ext
+    disk@: connector:publishing.connectors.local
+
+crl:
+    crl@: connector:publishing.connectors.cdp
+
+cacert:
+    disk-pem@: connector:publishing.connectors.cacert-pem
+    disk-der@: connector:publishing.connectors.cacert-der
+
+connectors:
+    ldap-ext:
+        class: Connector::Proxy::Net::LDAP::Single
+        LOCATION: ldap://localhost:389
+        base: ou=people,dc=mycompany,dc=com
+        filter: (&(mail=[% ARGS.0 %]) (objectCategory=person))
+        binddn: cn=admin,dc=mycompany,dc=com
+        password: admin
+        attrmap:
+            der: usercertificate;binary
+
+        create:
+            basedn: ou=people,dc=mycompany,dc=com
+            rdnkey: cn
+
+        schema:
+            cn:
+                objectclass: inetOrgPerson
+                values:
+                    sn: copy:self
+                    ou: IT Department
+
+    local:
+        class: Connector::Builtin::File::Path
+        LOCATION: /tmp/
+        file: "[% ARGS.0.replace('[^\\w-]','_') %].crt"
+        content: "[% pem %]"
+
+    cdp:
+        class: Connector::Builtin::File::Path
+        LOCATION: /var/www/download/
+        file: "[% ARGS.0.replace('[^\\w-]','_') %].crl"
+        content: "[% der %]"
+
+    cacert-pem:
+        class: Connector::Builtin::File::Path
+        LOCATION: /var/www/download/
+        file: "[% ARGS.0.replace('[^\\w-]','_') %].crt"
+        content: "[% pem %]"
+
+    cacert-der:
+        class: Connector::Builtin::File::Path
+        LOCATION: /var/www/download/
+        file: "[% ARGS.0.replace('[^\\w-]','_') %].cer"
+        content: "[% der %]"

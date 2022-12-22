@@ -1,0 +1,9 @@
+# Store key_id in datapool from a NICE generated key
+class: OpenXPKI::Server::Workflow::Activity::Tools::Datapool::SetEntry
+param:
+    namespace: certificate.privatekey
+    _map_key: $_private_key.key_id
+    _map_value: $_private_key.key_id
+    encrypt: 0
+    force: 0
+

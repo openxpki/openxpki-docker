@@ -1,0 +1,39 @@
+head:
+    prefix: showmeta
+    label: I18N_OPENXPKI_UI_WORKFLOW_TYPE_SHOW_METADATA_LABEL
+    description: I18N_OPENXPKI_UI_WORKFLOW_TYPE_SHOW_METADATA_DESC
+    persister: Volatile
+
+state:
+    INITIAL:
+        action:
+          - load_data > NOSTATUS
+
+    NOSTATUS:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_SHOWMETA_RESULT_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_SHOWMETA_RESULT_DESC
+        output:
+          - meta_entity
+          - meta_email
+          - meta_system_id
+
+action:
+    load_data:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::LoadCertificateMetadata
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_SHOWMETA_LOAD_DATA_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_SHOWMETA_LOAD_DATA_DESC
+        input:
+          - cert_identifier
+        validator:
+          - global_cert_identifier_exists
+
+acl:
+    CA Operator:
+        creator: any
+
+    RA Operator:
+        creator: any
+
+    System:
+        creator: any
+

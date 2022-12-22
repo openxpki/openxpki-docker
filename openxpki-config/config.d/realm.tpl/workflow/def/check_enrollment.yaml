@@ -1,0 +1,74 @@
+head:
+    prefix: checkenroll
+    persister: Volatile
+
+state:
+    INITIAL:
+        action:
+          - initialize calculate_transaction_id check_for_existing_workflow > CHECK_EXISTING_WORKFLOW
+
+    CHECK_EXISTING_WORKFLOW:
+        autorun: 1
+        action:
+         - global_set_error_search_has_no_matches > FAILURE ? !has_request_pending
+         - global_noop > SUCCESS ? has_request_pending
+
+    SUCCESS:
+        output:
+         - transaction_id
+         - workflow_id
+
+    FAILURE:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_SEARCH_SCEP_NORESULT_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_SEARCH_SCEP_NORESULT_DESC
+        status:
+            level: error
+            message: I18N_OPENXPKI_UI_SEARCH_HAS_NO_MATCHES
+        output:
+         - transaction_id
+         - error_code
+
+action:
+    initialize:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::SetContext
+        input:
+         - pkcs10
+         - transaction_id
+
+    calculate_transaction_id:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::SetContext
+        param:
+           _map_transaction_id: >
+            [% IF context.transaction_id %][% context.transaction_id %]
+            [% ELSE %][% USE PKCS10 %][% PKCS10.transaction_id(context.pkcs10) %][% END %]
+
+    check_for_existing_workflow:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::SearchWorkflow
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_SCEP_SEARCH_INITIALIZE_LABEL
+        param:
+            wf_type: certificate_enroll
+            _map_attr_transaction_id: $transaction_id
+            target_key: workflow_id
+            limit: 1
+
+field:
+    pkcs10:
+        name: pkcs10
+        type: server
+
+    pkcs7:
+        name: pkcs7
+        type: server
+
+condition:
+    has_request_pending:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: $context->{workflow_id}
+
+acl:
+    System:
+        creator: any
+
+    RA Operator:
+        creator: any

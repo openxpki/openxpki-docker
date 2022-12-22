@@ -1,0 +1,134 @@
+head:
+    prefix: adduser
+    label: I18N_OPENXPKI_UI_WORKFLOW_TYPE_ADDUSER_LABEL
+    description: I18N_OPENXPKI_UI_WORKFLOW_TYPE_ADDUSER_DESC
+
+state:
+    CHOOSE_ACTION:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_ADDUSER_CHOOSE_ACTION_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_ADDUSER_CHOOSE_ACTION_DESC
+        action:
+          - load_form > DATA_UPDATE
+          - terminate > FAILURE
+          - insert > SUCCESS
+
+    DATA_UPDATE:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_ADDUSER_DATA_UPDATE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_ADDUSER_DATA_UPDATE_DESC
+        action:
+          - update_context > CHOOSE_ACTION
+
+    FAILURE:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_FAILURE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_FAILURE_DESC
+
+    INITIAL:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_ADDUSER_INIT_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_ADDUSER_INIT_DESC
+        action:
+          - update_context > CHOOSE_ACTION
+
+    SUCCESS:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_ADDUSER_SUCCESS_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_ADDUSER_SUCCESS_DESC
+
+
+action:
+    load_form:
+        class: OpenXPKI::Server::Workflow::Activity::Noop
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ADDUSER_LOAD_FORM_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ADDUSER_LOAD_FORM_DESC
+
+    insert:
+        class: OpenXPKI::Server::Workflow::Activity::User::InsertUserData
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ADDUSER_PERSIST_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ADDUSER_PERSIST_DESC
+        param:
+            _map_username: $username
+            _map_realname: $realname
+            _map_mail: $mail
+            _map_role: $role
+
+    terminate:
+        class: OpenXPKI::Server::Workflow::Activity::Noop
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ADDUSER_TERMINATE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ADDUSER_TERMINATE_DESC
+
+    update_context:
+        class: OpenXPKI::Server::Workflow::Activity::Noop
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ADDUSER_UPDATE_CONTEXT_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_ADDUSER_UPDATE_CONTEXT_DESC
+        input:
+          - username
+          - mail
+          - realname
+          - role
+        validator:
+          - validate_email
+
+
+validator:
+
+    validate_email:
+        class: OpenXPKI::Server::Workflow::Validator::Regex
+        param:
+            regex: email
+            field: mail
+
+        arg:
+          - $mail
+
+field:
+    username:
+        label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_USERNAME_LABEL
+        name: username
+        description: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_USERNAME_DESC
+        placeholder: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_USERNAME_PLACEHOLDER
+        type: text
+    mail:
+        label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_EMAIL_LABEL
+        name: mail
+        description: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_EMAIL_DESC
+        placeholder: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_EMAIL_PLACEHOLDER
+        type: text
+    realname:
+        label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_REALNAME_LABEL
+        name: realname
+        description: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_REALNAME_DESC
+        placeholder: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_REALNAME_PLACEHOLDER
+        type: text
+    role:
+        label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_ROLE_LABEL
+        name: role
+        description: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_ROLE_DESC
+        type: select
+        option:
+            item:
+              - I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_ROLE_USER
+              - I18N_OPENXPKI_UI_WORKFLOW_FIELD_ADDUSER_ROLE_RAOP
+        width: 20
+
+acl:
+    CA Operator:
+        creator: any
+
+    RA Operator:
+        creator: any
+        fail: 1
+        resume: 1
+        wakeup: 1
+        history: 1
+        techlog: 1
+        attribute: 1
+        context: 1
+
+    System:
+        creator: any
+        fail: 1
+        resume: 1
+        wakeup: 1
+
+
+    User:
+        creator: self
+

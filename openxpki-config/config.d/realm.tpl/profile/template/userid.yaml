@@ -1,0 +1,7 @@
+id: userid
+label: I18N_OPENXPKI_UI_PROFILE_USERID
+description: I18N_OPENXPKI_UI_PROFILE_USERID_DESC
+type: text
+match: \A [0-9]+ \z
+width: 40
+placeholder: 12345

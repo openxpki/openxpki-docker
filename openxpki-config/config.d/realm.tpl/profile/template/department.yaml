@@ -1,0 +1,7 @@
+id: department
+label: I18N_OPENXPKI_UI_PROFILE_DEPARTMENT
+description: I18N_OPENXPKI_UI_PROFILE_DEPARTMENT_DESC
+type: text
+match: .+
+width: 60
+placeholder: IT Service

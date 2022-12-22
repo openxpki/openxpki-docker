@@ -1,0 +1,45 @@
+main:
+  - key: home
+    label: I18N_OPENXPKI_UI_MENU_HOME
+
+  - key:   pkiadm
+    label: I18N_OPENXPKI_UI_MENU_PKI_OPERATION
+    entries:
+      - key:   workflow!index!wf_type!crl_issuance
+        label: I18N_OPENXPKI_UI_MENU_CRL_ISSUE
+      - key:   secret!index
+        label: I18N_OPENXPKI_UI_MENU_MANAGE_SECRET
+      - key:   workflow!start!wf_type!ca_publish
+        label: I18N_OPENXPKI_UI_MENU_PUBLISH_CA_CRL
+
+
+  - key:   info
+    label: I18N_OPENXPKI_UI_MENU_INFORMATION
+    entries:
+      - key:   information!issuer
+        label: I18N_OPENXPKI_UI_MENU_CA_CERTIFICATES
+      - key:   crl!index
+        label: I18N_OPENXPKI_UI_MENU_CRL
+      - key:   workflow!start!wf_type!status_process
+        label: I18N_OPENXPKI_UI_MENU_PROCESS_INFORMATION
+      - key:   workflow!start!wf_type!status_system
+        label: I18N_OPENXPKI_UI_MENU_SYSTEM_STATUS
+
+certdetails:
+    metadata:
+      - label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_ENTITY_LABEL
+        field: meta_entity
+      - label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_META_REQUESTOR_LABEL
+        field: meta_requestor
+      - template: >
+          I18N_OPENXPKI_UI_WORKFLOW_FIELD_META_EMAIL_LABEL:
+          [% FOREACH mail = meta_email %]
+              <a href="mailto:[% mail %]">[% mail %]</a>,
+          [% END %]
+
+#
+# Workflow search - detail block
+#
+# For a configuration example see "RA Operator.yaml".
+# Here we just load the default configuration:
+wfdetails: null

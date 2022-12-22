@@ -1,0 +1,7 @@
+class: OpenXPKI::Server::Workflow::Activity::Tools::PublishCertificate
+param:
+    unpublish: 1
+    retry_count: 3
+    retry_interval: +0000000001
+    on_error: queue
+

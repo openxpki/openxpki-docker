@@ -1,0 +1,60 @@
+head:
+    prefix: conntest
+    persister: Volatile
+
+state:
+    INITIAL:
+        action:
+          - check_authorized_signer > CHECK
+
+    CHECK:
+        autorun: 1
+        action:
+          - global_set_error_not_authenticated > REJECTED ? !global_is_signed_request
+          - global_set_error_signer_not_authorized > REJECTED ? !global_is_signer_authorized !global_is_signer_revoked global_is_signed_request
+          - global_set_error_signer_expired > REJECTED ? global_is_signer_authorized !global_is_signer_revoked !global_is_signer_validity_ok
+          - global_set_error_signer_revoked > REJECTED ? global_is_signer_revoked global_is_signer_validity_ok
+          - global_noop > SUCCESS ? global_is_signer_authorized !global_is_signer_revoked global_is_signer_validity_ok
+
+    REJECTED:
+        output:
+         - error_code
+         - signer_trusted
+         - signer_authorized
+         - signer_validity_ok
+         - signer_revoked
+         - signer_cert_identifier
+         - signer_subject
+         - signer_subject_key_identifier
+         - signer_in_current_realm
+
+    SUCCESS:
+        output:
+         - signer_trusted
+         - signer_authorized
+         - signer_validity_ok
+         - signer_revoked
+         - signer_cert_identifier
+         - signer_subject
+         - signer_subject_key_identifier
+         - signer_in_current_realm
+
+action:
+    check_authorized_signer:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::EvaluateSignerTrust
+        input:
+         - signer_cert
+         - signer_chain
+         - interface
+         - server
+        param:
+            _map_rules: "[% context.interface %].[% context.server %].authorized_signer"
+            allow_external_signer: 1
+
+acl:
+    System:
+        creator: any
+
+    RA Operator:
+        creator: any
+

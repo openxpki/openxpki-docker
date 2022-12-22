@@ -1,0 +1,5 @@
+name: meta_email
+label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_META_EMAIL_LABEL
+description: I18N_OPENXPKI_UI_WORKFLOW_FIELD_META_EMAIL_DESC
+required: 1
+match: \A\S+\@([\w-]+\.)+(\w+)\z

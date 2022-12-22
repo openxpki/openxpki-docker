@@ -1,0 +1,132 @@
+head:
+    prefix: metadata
+    label: I18N_OPENXPKI_UI_WORKFLOW_TYPE_CHANGE_METADATA_LABEL
+    description: I18N_OPENXPKI_UI_WORKFLOW_TYPE_CHANGE_METADATA_DESC
+
+state:
+    INITIAL:
+        action:
+          - load_data > EDIT_DATA
+
+    EDIT_DATA:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_METADATA_EDIT_DATA_LABEL
+        template: |
+          [% IF context.updated %]
+            I18N_OPENXPKI_UI_WORKFLOW_STATE_METADATA_UPDATE_PENDING_DESC
+          [% ELSE %]
+            I18N_OPENXPKI_UI_WORKFLOW_STATE_METADATA_INITIAL_DATA_DESC
+          [% END %]
+        output:
+          - cert_identifier
+          - meta_entity
+          - meta_email
+          - meta_system_id
+        action:
+          - persist global_relate_workflow > SUCCESS ? has_updates
+          - update_base > EDIT_DATA
+          - global_cancel > CANCELED ? has_updates
+          - global_noop > CANCELED ? !has_updates
+          - set_notify_active > EDIT_DATA ? is_notify_disabled
+          - set_notify_inactive > EDIT_DATA ? is_notify_pending
+        button:
+          persist:
+            format: expected
+          update_base:
+            format: optional
+          global_cancel:
+            break: after
+          global_noop:
+            label: I18N_OPENXPKI_UI_WORKFLOW_ABORT_BUTTON
+            format: failure
+            break: after
+
+    FAILURE:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_FAILURE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_FAILURE_DESC
+        output:
+          - cert_identifier
+          - meta_entity
+          - meta_email
+          - meta_system_id
+
+    SUCCESS:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_SUCCESS_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_SUCCESS_DESC
+        output:
+          - cert_identifier
+          - meta_entity
+          - meta_email
+          - meta_system_id
+
+    CANCELED:
+        label: I18N_OPENXPKI_UI_WORKFLOW_STATE_CANCELED_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_STATE_CANCELED_DESC
+        output:
+          - cert_identifier
+          - meta_entity
+          - meta_email
+          - meta_system_id
+
+action:
+    load_data:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::LoadCertificateMetadata
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_CHANGEMETA_LOAD_DATA_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_CHANGEMETA_LOAD_DATA_DESC
+        input:
+          - cert_identifier
+        validator:
+          - global_cert_identifier_exists
+
+    persist:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::UpdateCertificateMetadata
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_CHANGEMETA_PERSIST_LABEL
+
+    update_base:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::SetContext
+        label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_CHANGEMETA_UPDATE_BASE_LABEL
+        description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_CHANGEMETA_UPDATE_BASE_DESC
+        # Add/remove input fields and validators here as needed
+        param:
+            updated: 1
+        input:
+          - cert_identifier_static
+          - meta_email
+          - meta_system_id
+        validator:
+          - global_system_id
+
+condition:
+    is_notify_pending:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: ($context->{meta_expiry_notification} eq 'pending')
+
+    is_notify_disabled:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: (!$context->{meta_expiry_notification} || $context->{meta_expiry_notification} =~ m{(disabled|suppress)})
+
+    has_updates:
+        class: Workflow::Condition::Evaluate
+        param:
+            test: ($context->{updated})
+
+acl:
+    CA Operator:
+        creator: any
+
+    RA Operator:
+        creator: any
+        fail: 1
+        resume: 1
+        wakeup: 1
+        history: 1
+        techlog: 1
+        attribute: 1
+        context: 1
+
+    System:
+        creator: any
+        fail: 1
+        resume: 1
+        wakeup: 1

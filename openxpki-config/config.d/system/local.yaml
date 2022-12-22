@@ -1,0 +1,5 @@
+database:
+  main:
+    wait_on_init:
+      retry_count: 5
+      retry_interval: 15

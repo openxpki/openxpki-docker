@@ -1,0 +1,14 @@
+# Create the file at the named location, make sure it is readable
+# by the openxpi server process and create an entry for each user:
+#
+# John Doe:
+#    digest: "{ssha}9DgilxbKtDVpSW86NjCzcnUkuBtzYWx0"
+#    role: User
+#
+# Use the openxpkiadm tool or "openssl passwd -5" to genrerate the hashes
+# valid role names are "User" and "RA Operator", you can also add additional
+# information such as name, gname, realname, email
+
+userdb:
+    class: Connector::Proxy::YAML
+    LOCATION: /home/pkiadm/userdb.yaml

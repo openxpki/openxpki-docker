@@ -1,0 +1,34 @@
+label: EST Default Endpoint
+
+authorized_signer:
+    rule1:
+        # Full DN
+        subject: CN=.+:pkiclient,.*
+
+renewal_period: 000060
+
+# for an explanation of the policy options have a look at rpc/enroll.yaml
+policy:
+    # anon request are ok
+    allow_anon_enroll: 1
+    # manual approval for anon request
+    allow_man_approv: 1
+    # enforce subject duplicate policy
+    max_active_certs: 1
+    auto_revoke_existing_certs: 1
+    # require one approval
+    approval_points: 1
+
+profile:
+    cert_profile: tls_server
+    cert_subject_style: enroll
+
+eligible:
+    initial:
+        value: 0
+
+    renewal:
+        value: 1
+
+    onbehalf:
+       value: 1

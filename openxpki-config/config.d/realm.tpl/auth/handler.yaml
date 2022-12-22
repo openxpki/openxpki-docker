@@ -1,0 +1,82 @@
+# Those stacks are usually required so you should not remove them
+Anonymous:
+    type: Anonymous
+    label: Anonymous
+
+System:
+    type: Anonymous
+    role: System
+
+# Using the default config this allows a user login with ANY certificate
+# issued by the democa which has the client auth keyUsage bit set
+# the commonName is used as username!
+Certificate:
+    type: ClientX509
+    role: User
+    arg: CN
+    trust_anchor:
+        realm: democa
+
+# Read the userdata from a YAML file defined in auth/connector.yaml
+LocalPassword:
+    type: Password
+    user@: connector:auth.connector.userdb
+
+# Accounts for testing, Password for all accounts is "openxpki"
+# the additional keys can hold arbitrary information but those
+# named here are used to prefill the requestor information in the
+# sample profile items.
+TestAccounts:
+    type: Password
+    user:
+        caop:
+            digest: "{ssha}JQ2BAoHQZQgecmNjGF143k4U2st6bE5B"
+            role: CA Operator
+
+        raop:
+            digest: "$1$NgiUHfZ4$G/Zic.SH6cuWaGpqtbVWI1"
+            role: RA Operator
+            name: Operator
+            gname: Óðinn
+            realname: Óðinn Operator
+            email: odin@example.com
+            tenant:
+             - Alice Group
+             - Bob Group
+
+        rose:
+            digest: "$5$YXQUdF.xJGuTdPjf$peg58UGjJ52a8rCnv13IWyH/y4b0PNdM12i7bzXqbuD"
+            role: RA Operator
+            name: Robinson
+            gname: Rose
+            realname: Rose Robinson
+            email: rose@example.com
+            tenant: Alice Group
+
+        rob:
+            digest: "{ssha}JQ2BAoHQZQgecmNjGF143k4U2st6bE5B"
+            role: RA Operator
+            name: Roberts
+            gname: Rob
+            realname: Rob Roberts
+            email: rob@example.com
+            tenant: Bob Group
+
+        alice:
+            digest: "{ssha}JQ2BAoHQZQgecmNjGF143k4U2st6bE5B"
+            role: User
+            name: Anderson
+            gname: Alice
+            realname: Alice Anderson
+            email: alice@example.com
+            tenant: Alice Group
+
+        bob:
+            digest: "{ssha}JQ2BAoHQZQgecmNjGF143k4U2st6bE5B"
+            role: User
+            name: Baker
+            gname: Bob
+            realname: Bob Baker
+            email: bob@example.com
+            tenant: Bob Group
+

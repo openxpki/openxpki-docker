@@ -1,0 +1,10 @@
+label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_POLICY_SUBJECT_DUPLICATE_LABEL
+name: check_policy_subject_duplicate
+format: linklist
+preamble: Expiry / Identifier
+yaml_template: >
+  [% USE Certificate %]
+  [% FOREACH identifier = value %]
+    - page: certificate!detail!identifier![% identifier %]
+      label: "[% Certificate.notafter(identifier) %] / [% identifier %]"
+  [% END %]

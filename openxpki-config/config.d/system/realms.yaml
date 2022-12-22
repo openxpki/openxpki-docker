@@ -1,0 +1,6 @@
+# This is the list of realms in this PKI
+# You only need to enable the realms which are visible on the server
+
+democa:
+    label: Example.org Demo CA
+    baseurl: https://pki.example.com/openxpki/

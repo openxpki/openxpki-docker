@@ -1,0 +1,10 @@
+label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_TRANSACTION_ID_LABEL
+name: transaction_id
+description: I18N_OPENXPKI_UI_WORKFLOW_FIELD_TRANSACTION_ID_DESC
+placeholder: d2b5848880cdb8bdac5cfe01adbe50c475fc00e8
+required: 0
+type: text
+api_type: Str
+# Support word character prefix and suffix using a colon 
+# Support md5 to sha256 hashes with upper and lowercase hex
+match: \A(\w+:)?[0-9a-zA-Z]{32,64}(:\d+)?\z

@@ -1,0 +1,4 @@
+name: revoke_workflow_id
+label: I18N_OPENXPKI_UI_REVOCATION_WORKFLOW_ID
+template: "[% IF value %][% value %] ([% USE Workflow; Workflow.state(value) %])[% END %]"
+api_type: Int

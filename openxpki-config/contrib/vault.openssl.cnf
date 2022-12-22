@@ -1,0 +1,22 @@
+# Use this file to genereate the self-signed DataVault certificate
+# Note that the key will be unencrypted!
+# openssl req -new -x509 -keyout vault.key -out vault.crt -days 1100 \
+#    -config vault.openssl.cnf
+
+[ req ]
+default_bits = 3072
+distinguished_name = req_distinguished_name
+encrypt_key = no
+req_extensions = v3_datavault_extensions
+x509_extensions = v3_datavault_extensions
+prompt = no
+
+[ req_distinguished_name ]
+commonName=DataVault
+
+[ v3_datavault_extensions ]
+subjectKeyIdentifier    = hash
+keyUsage                = keyEncipherment
+basicConstraints        = CA:FALSE
+authorityKeyIdentifier  = keyid:always,issuer
+

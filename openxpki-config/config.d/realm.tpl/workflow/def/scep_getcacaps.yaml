@@ -1,0 +1,38 @@
+head:
+    prefix: scepcaps
+    persister: Volatile
+
+state:
+    INITIAL:
+        action: initialize > SUCCESS
+
+    SUCCESS: ~
+
+action:
+    initialize:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::SetContext
+        input:
+          - server
+          - interface
+        param:
+            # CA Caps expects the new line separated items one per line
+            # Add "GetNextCACert" if you want to support it
+            _map_output: |-
+              Renewal
+              POSTPKIOperation
+              SHA-512
+              SHA-384
+              SHA-256
+              SHA-224
+              SHA-1
+              DES3
+              AES
+
+acl:
+    System:
+        creator: any
+        context: 1
+
+    RA Operator:
+        creator: any
+        context: 1

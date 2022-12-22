@@ -1,0 +1,46 @@
+# Default CRL profile
+# You can have a profile for each ca, if no profile with the name
+# of the ca is found, we fall back to this default profile
+
+# Validity control for the crl
+validity: 
+    # validity interval used while the ca is active (relative date!)
+    # e.g. +000014 will set nextUpdate to the "now + 14 days" at the
+    # time of issuance. The format is +YYMMDDhhmmss.
+    nextupdate: +000014
+    
+    # how long before next update a new crl should be issued
+    # this is evaluated by the CRL issuance workflow to decide
+    # weather a new CRL should be created when the workflow runs
+    # the nextUpdate timestamp of the latest existing CRL must be
+    # withthin this interval to trigger CRL issuance.
+    renewal: +000003
+
+    # validity of last crl issued before ca is end of life
+    # if the nextUpdate for a CRL would exceeed the notafter of the
+    # CA the CRL is created with an nextUpdate date set to this value
+    # this should be an absolute date given as YYYYMMDD[hhmm[ss]]
+    # due to limitations of openssl the exact date will be determined
+    # with a granularity of hours so this will become 23:xx on Dec 31th
+    lastcrl: 20500101
+
+digest: sha256
+extensions:
+    authority_info_access:
+        critical: 0
+        # ca_issuers and ocsp can be scalar or list
+        #ca_issuers: http://localhost/cacert.crt
+        #ocsp: http://ocsp.openxpki.org/
+
+    authority_key_identifier:
+        critical: 0
+        keyid:  1
+        issuer: 0
+
+
+    issuer_alt_name:        
+        critical: 0
+        # If the issuer has no subject alternative name, copying returns
+        # an empty extension, which is problematic with both RSA SecurId
+        # tokens and Cisco devices!
+        copy: 0

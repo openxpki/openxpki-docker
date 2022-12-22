@@ -1,0 +1,6 @@
+label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_CLIENT_IP_LABEL
+name: client_ip
+description: I18N_OPENXPKI_UI_WORKFLOW_FIELD_CLIENT_IP_DESC
+required: 0
+type: server
+

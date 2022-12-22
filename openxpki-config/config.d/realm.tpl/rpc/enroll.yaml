@@ -1,0 +1,118 @@
+# Used in some dropdowns on the UI as name for this endpoint
+label: Enrollment
+
+# A renewal request is only accpeted if the used certificate will
+# expire within this period of time.
+renewal_period: 000060
+
+# Create certificates for initial requests with a short validity to
+# allow an immediate renewal
+initial_validity: +000030
+
+# If the request was a replacement, optionally revoke the replaced
+# certificate after a grace period
+revoke_on_replace:
+    reason_code: keyCompromise
+    delay_revocation_time: +000014
+
+# if you remove this section, any non-renewal request will be treated
+# as an initial request, this works around non-standard MDM and devices
+authorized_signer:
+    rule1:
+        # Full DN
+        subject: CN=.+:pkiclient,.*
+    rule2:
+        # Full DN
+            subject: CN=my.scep.enroller.com:generic,.*
+
+policy:
+    # Authentication Options
+    # Initial requests need ONE authentication.
+    # Activate Challenge Password and/or HMAC by setting the appropriate
+    # options below.
+
+    # if set requests can be authenticated by an operator
+    allow_man_authen: 1
+
+    # if set, no authentication is required at all and hmac/challenge is
+    # not evaluated even if it is set/present in the request!
+    allow_anon_enroll: 0
+
+    # Approval
+    # If not autoapproved, allow opeerator to add approval by hand
+    allow_man_approv: 1
+
+    # if the eligibiliyt check failed the first time
+    # show a button to run a recheck (Workflow goes to PENDING)
+    allow_eligibility_recheck: 0
+
+    # Approval points requirede (eligibity and operator count as one point each)
+    # if you set this to "0", all authenticated requests are auto-approved!
+    approval_points: 1
+
+    # The number of active certs with the same subject that are allowed
+    # to exist at the same time, deducted by one if a renewal is seen
+    # set to 0 if you dont want to check for duplicates at all
+    max_active_certs: 1
+
+    # If an initial enrollment is seen
+    # all existing certificates with the same subject are revoked
+    auto_revoke_existing_certs: 1
+
+    # allows a "renewal" outside the renewal window, the notafter date
+    # is aligned to the old certificate. Set revoke_on_replace option
+    # to revoke the replaced certificate.
+    # This substitutes the "replace_window" from the OpenXPKI v1 config
+    allow_replace: 1
+
+    # by default only the certificate identifier is written to the workflow
+    # set to a true value to get the PEM encoded certificate in the context,
+    # set to "chain" to get the issuer certificate and "fullchain" to get
+    # the chain including the root certificate (key chain).
+    export_certificate: chain
+
+
+    # Those options are pulled by the revoke_by_entity workflow, they have no
+    # effect on the enrollment workflow! You must set at least one of them or
+    # remove the is_policy_loaded condition in the workflow definition
+
+    # Allow revocation of any certificate with a certain profile
+    # profile: tls_server
+
+    # Allow revocation if the subject matches the given pattern
+    # subject: "*"
+
+
+profile:
+  cert_profile: tls_server
+  cert_subject_style: enroll
+
+# Mapping of names to OpenXPKI profiles to be used with the
+# Microsoft Certificate Template Name Ext. (1.3.6.1.4.1.311.20.2)
+profile_map:
+    pc-client: tls_client
+    tls-server: tls_server
+    tls-client: tls_client
+    renewal-test: renewal_test
+
+# HMAC based authentication
+hmac: verysecret
+
+challenge:
+    value: SecretChallenge
+
+eligible:
+    initial:
+       value@: connector:rpc.enroll.connector.intranet
+       args: '[% context.cert_subject_parts.CN.0 %]'
+
+    renewal:
+       value: 1
+
+    onbehalf:
+       value: 1
+
+connector:
+    intranet:
+        class: OpenXPKI::Connector::Regex
+        LOCATION: \w+\.openxpki.test(:[\w]+)?\z

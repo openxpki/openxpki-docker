@@ -1,0 +1,4 @@
+disabled: 1
+
+# Instructions how to write your own ACL ruleset can be found in
+# OpenXPKI::Server::API2

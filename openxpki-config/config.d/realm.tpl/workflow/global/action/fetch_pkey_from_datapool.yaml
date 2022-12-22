@@ -1,0 +1,5 @@
+class: OpenXPKI::Server::Workflow::Activity::Tools::Datapool::GetEntry
+param:
+    namespace: certificate.privatekey
+    _map_key: "[% USE Certificate; Certificate.key_id(context.cert_identifier) %]"    
+    target_key: _private_key

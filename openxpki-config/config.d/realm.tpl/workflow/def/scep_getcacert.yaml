@@ -1,0 +1,36 @@
+head:
+    prefix: scepca
+    persister: Volatile
+
+state:
+    INITIAL:
+        action: initialize create_output > SUCCESS
+
+    SUCCESS: ~
+
+action:
+    initialize:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::GetIdentifierForAlias
+        input:
+          - server
+          - interface
+        param:
+            token: scep
+
+    create_output:
+        class: OpenXPKI::Server::Workflow::Activity::Tools::CertificateExport
+        param:
+            _map_cert_identifier: $cert_identifier
+            export_format: PKCS7DER
+            base64: 1
+            include_root_cert: 1
+            target_key: output
+
+acl:
+    System:
+        creator: any
+        context: 1
+
+    RA Operator:
+        creator: any
+        context: 1

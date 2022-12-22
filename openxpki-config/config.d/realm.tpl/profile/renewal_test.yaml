@@ -1,0 +1,22 @@
+# the only purpose of this profile is to receive a certificate that can
+# be used to perform renewal tests against automated endpoints. 
+# Please do not deploy this in production environments!
+
+
+label: Renewal Test Profile - remove for production setup
+
+validity:
+    notafter: +000030
+
+style:
+    enroll:
+        subject:
+            dn: CN=[% CN.0 %],OU=For Endpoint Testing Only,DC=Test Deployment,DC=OpenXPKI,DC=org
+
+
+# Profile extensions - set 0/1 as needed
+extensions:
+    key_usage:
+        critical:          1
+        digital_signature: 1
+

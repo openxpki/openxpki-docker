@@ -1,0 +1,8 @@
+id: requestor_email
+label: I18N_OPENXPKI_UI_PROFILE_REQUESTOR_EMAIL
+description: I18N_OPENXPKI_UI_PROFILE_REQUESTOR_EMAIL_DESC
+type: text
+width: 40
+match: .+@.+
+placeholder: john.doe@openxpki.org
+preset: userinfo.email

@@ -1,0 +1,72 @@
+#Sample Mockup Config for Token config of a single realm
+# The left side are fixed aliases used in the code, the right side
+# are aribtrary chosen names, referencing the tokens below.
+type:
+  certsign: ca-signer
+  datasafe: vault
+  cmcra: ratoken
+  scep: scep
+
+# The actual token setup
+token:
+  default:
+    backend: OpenXPKI::Crypto::Backend::OpenSSL
+
+    # Template to create key, available vars are
+    # ALIAS (ca-signer-1), GROUP (ca-signer), GENERATION (1)
+    # KEY_IDENTIFIER (00:AA:BB...), IDENTIFIER (aGSNY1Z...)
+    key: /etc/openxpki/local/keys/[% PKI_REALM %]/[% ALIAS %].pem
+
+    # possible values are OpenSSL, nCipher, LunaCA
+    engine: OpenSSL
+    engine_section: ''
+    engine_usage: ''
+    key_store: OPENXPKI
+
+    # OpenSSL binary location
+    shell: /usr/bin/openssl
+
+    # OpenSSL binary call gets wrapped with this command
+    wrapper: ''
+
+    # random file to use for OpenSSL
+    randfile: /var/openxpki/rand
+
+    # Default value for import, recorded in database, can be overriden
+    secret: default
+
+  ca-signer:
+    inherit: default
+    key_store: DATAPOOL
+    key: "[% ALIAS %]"
+
+  vault:
+    inherit: default
+    key: /etc/openxpki/local/keys/[% ALIAS %].pem
+
+  ratoken:
+    inherit: default
+    key_store: DATAPOOL
+    key: "[% KEY_IDENTIFIER %]"
+    secret: ratoken
+
+  scep:
+    inherit: default
+    key_store: DATAPOOL
+    key: "[% KEY_IDENTIFIER %]"
+    secret: ratoken
+
+# Define the secret groups
+secret:
+    default:
+        # this let OpenXPKI use the secret of the same name from system.crypto
+        # if you do not want to share the secret just replace this line with
+        # the config found in system.crypto. You can create additional secrets
+        # by adding similar blocks with another key
+        import: 1
+
+    ratoken:
+        label: Secret group for RA Token
+        export: 1
+        method: literal
+        value: root

@@ -1,0 +1,7 @@
+id: application_name
+label: I18N_OPENXPKI_UI_PROFILE_APPLICATION_NAME
+description: I18N_OPENXPKI_UI_PROFILE_APPLICATION_NAME_DESC
+preset: "[% CN.0.replace('^[^:]+:?','') %]"
+type: text
+match: \A[a-z][a-z0-9\-]{1,10}[a-z0-9]\z
+required: 0

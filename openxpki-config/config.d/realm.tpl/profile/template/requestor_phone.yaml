@@ -1,0 +1,6 @@
+id: requestor_phone
+label: I18N_OPENXPKI_UI_PROFILE_PHONE
+description: I18N_OPENXPKI_UI_PROFILE_PHONE_DESC
+type: text
+width: 20
+preset: userinfo.phone

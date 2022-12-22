@@ -1,0 +1,4 @@
+label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_CERT_IDENTIFIER_LABEL
+name: cert_identifier
+type: static
+template: "[% IF value %][% USE Certificate %][% value %]<br/>[% Certificate.body(value, 'subject') %][% END %]"

@@ -1,0 +1,6 @@
+label: I18N_OPENXPKI_UI_WORKFLOW_FIELD_TLS_CLIENT_DN_LABEL
+name: tls_client_dn
+description: I18N_OPENXPKI_UI_WORKFLOW_FIELD_TLS_CLIENT_DN_DESC
+required: 0
+type: server
+

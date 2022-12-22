@@ -1,0 +1,9 @@
+id: OU
+label: OU
+description: I18N_OPENXPKI_UI_PROFILE_OU_DESC
+preset: OU.X
+type: text
+width: 40
+required: 0
+max: 1000
+placeholder: IT Department

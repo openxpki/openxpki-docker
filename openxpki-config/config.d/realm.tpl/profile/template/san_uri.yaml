@@ -1,0 +1,7 @@
+id: uri
+label: I18N_OPENXPKI_UI_PROFILE_SAN_URI
+description: I18N_OPENXPKI_UI_PROFILE_SAN_URI_DESCRIPTION
+type: text
+width: 40
+required: 0
+max: 20

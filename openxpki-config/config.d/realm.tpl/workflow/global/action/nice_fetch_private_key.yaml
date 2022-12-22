@@ -1,0 +1,8 @@
+class: OpenXPKI::Server::Workflow::Activity::NICE::FetchKey
+label: I18N_OPENXPKI_UI_WORKFLOW_ACTION_NICE_FETCH_CERTIFICATE_LABEL
+description: I18N_OPENXPKI_UI_WORKFLOW_ACTION_NICE_FETCH_CERTIFICATE_DESC
+param:
+    _map_key_id: "[% USE Certificate; Certificate.key_id(context.cert_identifier) %]"
+    _map_password: $_password
+    target_key: _private_key 
+

@@ -1,0 +1,3 @@
+label: I18N_OPENXPKI_UI_WORKFLOW_CREATOR_LABEL
+name: creator
+template: "[% USE Metadata; Metadata.creator(value) %]"

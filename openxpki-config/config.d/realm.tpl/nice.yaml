@@ -1,0 +1,6 @@
+backend: Local
+
+# This feature does not work with mysql (mariadb 10 works)
+api:
+    use_revocation_id: 1
+

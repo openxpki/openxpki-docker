@@ -1,0 +1,44 @@
+# Please remove the Testing entry for all non-demo usages!
+# Please also review and adjust handler.yaml as there are
+# HARDCODED PASSWORDS for testing and other wildcard which are not
+# suitable for production use!
+
+# Allows Anonymous Login (also from the WebUI!)
+Anonymous:
+    label: Anonymous
+    description: Access for as guests without credentials
+    handler: Anonymous
+    type: anon
+
+# Regular login for users via an external password database defined
+# in handler.yaml as "LocalPassword"
+LocalPassword:
+    label: User Login
+    description: Login with username and password
+    handler: LocalPassword
+    type: passwd
+
+# Test Accounts with hardcoded passwords and userinfo in handler.yaml
+Testing:
+    label: Test Accounts
+    description: |
+        Test accounts - valid user names are <tt>alice</tt>, <tt>bob</tt> (users) and <tt>rose</tt>, <tt>rob</tt> (operators).<br>
+        Password for all accounts is <tt>openxpki</tt> on <b>unmodified config checkouts</b>,<br>
+        package installers set a <b>random value</b> that can be found in the file auth/handler.yaml.
+    handler: TestAccounts
+    type: passwd
+
+# Login with a client certificate, needs to be setup on the webserver
+Certificate:
+    label: Client certificate
+    description: Login using a client certificate
+    handler: Certificate
+    type: x509
+    sign:
+        # This is the public key matching the private one given in webui/default.conf
+        # Use "openssl pkey -pubout" to create the required string from the private key
+        # key: MFkwEwYHK.......pK7qV/FmDw==
+
+# The default handler for automated interfaces, hidden from the UI
+_System:
+    handler: System
