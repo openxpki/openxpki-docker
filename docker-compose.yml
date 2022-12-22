@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-#    restart: always
+    restart: always
     image: mariadb:10
     command: --default-authentication-plugin=mysql_native_password
     volumes:
@@ -16,9 +16,9 @@ services:
       MYSQL_ROOT_PASSWORD: topsecret
 
   openxpki-server:
-#    restart: always
-    image: whiterabbitsecurity/openxpki3
-    command: /usr/bin/openxpkictl start --no-detach
+    restart: always
+    # image: whiterabbitsecurity/openxpki3
+    build: .
     volumes:
       - ./openxpki-config:/etc/openxpki
       - openxpkilog:/var/log/openxpki
@@ -29,25 +29,12 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     depends_on:
         - db
-
-  openxpki-client:
-#    restart: always
-    image: whiterabbitsecurity/openxpki3
-    command: /usr/bin/start-apache
     ports:
       - "8080:80/tcp"
       - "8443:443/tcp"
-    volumes:
-      - ./openxpki-config:/etc/openxpki
-      - openxpkilog:/var/log/openxpki
-      - openxpkisocket:/var/openxpki/
-      - openxpkidbsocket:/var/run/mysqld/
-    depends_on:
-        - openxpki-server
 
 volumes:
   openxpkidb:
   openxpkisocket:
   openxpkidbsocket:
   openxpkilog:
-
