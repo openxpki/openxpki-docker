@@ -1,6 +1,6 @@
 DOCKER_DIR=$(shell basename $(dir $$PWD/.))
 IMAGE = whiterabbitsecurity/openxpki3
-export COMPOSE_PROJECT_NAME=openxpki
+export COMPOSE_PROJECT_NAME=openxpki-docker
 
 -include Makefile.local
 
@@ -10,26 +10,26 @@ help:
 test:
 	$(info $(DOCKER_DIR))
 
-build:  ## DockerFileを使用してOpenXPKI画像を再構築します
+build:  ## DockerFileを使用してOpenXPKI imageを再構築します
 	docker build -t $(IMAGE) .
 
-build-nocache:  ## DockerFileを使用してOpenXPKI画像を再構築します
+build-nocache:  ## DockerFileを使用してOpenXPKI imageを再構築します
 	docker build --no-cache -t $(IMAGE) .
 
-compose-up: ## call docker-compose up -d
+up: ## call docker-compose up -d
 	docker compose up --build -d
 
-compose-down: ## call docker compose down
+down: ## call docker compose down
 	docker compose down
 
-compose-restart: ## call docker compose restart
+restart: ## call docker compose restart
 	docker compose restart
 
 sample-config: ## contrib/からsampleconfigスクリプトを実行する
 	docker exec -it $(shell docker ps -aqf "name=${COMPOSE_PROJECT_NAME}-openxpki-server-1") /bin/bash /etc/openxpki/contrib/sampleconfig.sh
 
-restart-server: ## サーバーコンテナを再起動します
-	docker restart ${COMPOSE_PROJECT_NAME}-openxpki-server-1
+restart: ## サーバーコンテナを再起動します
+	docker compose restart
 
 clean:  ## コンテナを削除しますが、ボリュームを保持します
 	docker compose stop || /bin/true
