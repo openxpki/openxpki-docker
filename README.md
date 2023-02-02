@@ -49,7 +49,7 @@ If you want to setup a two-tier hierarchy we recommend using our command line ca
 The repository comes with a bootstrap script, that generates a two-tier PKI hierarchy and prepares anything "ready-to-go".
 
 ```bash
-$ docker exec -it openxpki_openxpki-server_1 /bin/bash /etc/openxpki/contrib/sampleconfig.sh
+$ docker exec -it openxpki-docker_openxpki-server_1 /bin/bash /etc/openxpki/contrib/sampleconfig.sh
 ```
 
 If you have `make` installed, just run `make sample-config` which will run the above command for you.
@@ -58,7 +58,7 @@ If you have `make` installed, just run `make sample-config` which will run the a
 
 #### 500 Server Error / No WebUI
 
-In case the WebUI does not start or you get a 500 Server Error when calling the RPC/SCEP/EST wrappers the most common problem are broken permissions on the log folder/files `/var/log/openxpki`. Running `docker exec -ti openxpki_openxpki-client_1 chmod 4777 /var/log/openxpki` will make the folder world writable so the problem should be gone.
+In case the WebUI does not start or you get a 500 Server Error when calling the RPC/SCEP/EST wrappers the most common problem are broken permissions on the log folder/files `/var/log/openxpki`. Running `docker exec -ti openxpki-docker_openxpki-client_1 chmod 4777 /var/log/openxpki` will make the folder world writable so the problem should be gone.
 
 #### Running on SELinux
 
