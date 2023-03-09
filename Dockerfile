@@ -12,7 +12,7 @@ RUN rm /etc/locale.gen && \
 
 RUN wget https://packages.openxpki.org/v3/debian/openxpki.list -O /etc/apt/sources.list.d/openxpki.list
 RUN wget https://packages.openxpki.org/v3/debian/Release.key -O - | apt-key add -
-RUN apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver libcrypt-libscep-perl libscep
+RUN apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver libcrypt-libscep-perl libscep default-jre
 RUN apt-get clean
 
 # Hack to run rhel/sles configs in this container
