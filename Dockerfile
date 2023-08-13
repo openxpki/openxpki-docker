@@ -4,6 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG OPENXPKI_NOCONFIG=1
 
 RUN apt-get update && \
+    apt-get upgrade --assume-yes && \
     apt-get install --assume-yes gpg libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less gettext
 
 RUN rm /etc/locale.gen && \
