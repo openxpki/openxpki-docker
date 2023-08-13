@@ -93,5 +93,8 @@ test -e /etc/openxpki/i18n/.update && /usr/bin/update-i18n && rm -f /etc/openxpk
 # avoid permission problems with the log volume 
 chmod 4777 /var/log/openxpki
 
+# fix missing permissions on fcgid sock dir
+chown www-data:www-data /var/lib/apache2/fcgid/sock
+
 # finally: start apache
 /usr/sbin/apache2ctl -D FOREGROUND
