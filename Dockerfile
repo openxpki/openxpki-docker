@@ -1,20 +1,22 @@
-FROM debian:buster
+FROM debian:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG OPENXPKI_NOCONFIG=1
 
 RUN apt-get update && \
     apt-get upgrade --assume-yes && \
-    apt-get install --assume-yes gpg libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less gettext
+    apt-get install --assume-yes gpg libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less gettext curl
 
 RUN rm /etc/locale.gen && \
     (for lang in "en_US" "de_DE"; do echo "$lang.UTF-8 UTF-8" >> /etc/locale.gen; done) && \
     dpkg-reconfigure --frontend=noninteractive locales
 
-RUN wget https://packages.openxpki.org/v3/debian/openxpki.list -O /etc/apt/sources.list.d/openxpki.list
-RUN wget https://packages.openxpki.org/v3/debian/Release.key -O - | apt-key add -
+RUN echo 'Types: deb\nURIs: https://packages.openxpki.org/v3/bookworm/\nSuites: bookworm\nComponents: release\nSigned-By: /etc/apt/keyrings/openxpki.pgp' > /etc/apt/sources.list.d/openxpki.sources
+RUN curl -fsSL https://packages.openxpki.org/v3/debian/Release.key | gpg --dearmor -o /etc/apt/keyrings/openxpki.pgp
+RUN chmod a+r /etc/apt/keyrings/openxpki.pgp
 RUN apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver 
 RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/*
 
 # Hack to run rhel/sles configs in this container
 RUN /usr/bin/id -u www-data | xargs /usr/sbin/useradd apache -s /usr/sbin/nologin -b /var/www -g www-data -o -u
