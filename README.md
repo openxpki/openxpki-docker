@@ -11,8 +11,7 @@ The provided docker-compose creates three containers:
 Before running compose you **MUST** place a configuration directory named `openxpki-config` in the current directory, the easiest way is to clone the branch `community` from the `openxpki-config` repository at github.
 
 ```bash
-$ git clone https://github.com/openxpki/openxpki-config.git \
-	--single-branch --branch=community
+$ git clone https://github.com/openxpki/openxpki-config.git --single-branch --branch=community
 ```
 
 The default configuration expects the database to be available at server startup which might not be the case when using docker, especially on the first start when the database needs to be created. To avoid the server to crash when the database is not available you should set `wait_on_init` in `config.d/system/database.yaml`. For a production setup you should place this into your main configuration but for a test drive you can use the provided overlay file:
