@@ -4,11 +4,12 @@ services:
   db:
 #    restart: always
     image: mariadb:10
+    security_opt: label=disable
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - openxpkidb:/var/lib/mysql
       - openxpkidbsocket:/var/run/mysqld/
-      - ./openxpki-config/contrib/sql/schema-mariadb.sql:/docker-entrypoint-initdb.d/schema-mariadb.sql
+      - ./openxpki-config/contrib/sql/schema-mariadb.sql:/docker-entrypoint-initdb.d/schema-mariadb.sql:z
     environment:
       MYSQL_DATABASE: openxpki
       MYSQL_USER: openxpki
@@ -18,9 +19,10 @@ services:
   openxpki-server:
 #    restart: always
     image: whiterabbitsecurity/openxpki3
+    security_opt: label=disable
     command: /usr/bin/openxpkictl start --no-detach
     volumes:
-      - ./openxpki-config:/etc/openxpki
+      - ./openxpki-config:/etc/openxpki:z
       - openxpkilog:/var/log/openxpki
       - openxpkisocket:/var/openxpki/
       - openxpkidbsocket:/var/run/mysqld/
@@ -33,12 +35,13 @@ services:
   openxpki-client:
 #    restart: always
     image: whiterabbitsecurity/openxpki3
+    security_opt: label=disable
     command: /usr/bin/start-apache
     ports:
       - "8080:80/tcp"
       - "8443:443/tcp"
     volumes:
-      - ./openxpki-config:/etc/openxpki
+      - ./openxpki-config:/etc/openxpki:z
       - openxpkilog:/var/log/openxpki
       - openxpkisocket:/var/openxpki/
       - openxpkidbsocket:/var/run/mysqld/
