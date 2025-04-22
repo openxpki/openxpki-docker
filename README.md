@@ -49,7 +49,7 @@ If you want to setup a two-tier hierarchy we recommend using our command line ca
 The repository comes with a bootstrap script, that generates a two-tier PKI hierarchy and prepares anything "ready-to-go".
 
 ```bash
-$ docker exec -it openxpki_openxpki-server_1 /bin/bash /etc/openxpki/contrib/sampleconfig.sh
+$ docker exec -it openxpki-docker_openxpki-server_1 /bin/bash /etc/openxpki/contrib/sampleconfig.sh
 ```
 
 If you have `make` installed, just run `make sample-config` which will run the above command for you.
@@ -58,7 +58,7 @@ If you have `make` installed, just run `make sample-config` which will run the a
 
 #### 500 Server Error / No WebUI
 
-In case the WebUI does not start or you get a 500 Server Error when calling the RPC/SCEP/EST wrappers the most common problem are broken permissions on the log folder/files `/var/log/openxpki`. Running `docker exec -ti openxpki_openxpki-client_1 chmod 4777 /var/log/openxpki` will make the folder world writable so the problem should be gone.
+In case the WebUI does not start or you get a 500 Server Error when calling the RPC/SCEP/EST wrappers the most common problem are broken permissions on the log folder/files `/var/log/openxpki`. Running `docker exec -ti openxpki-docker_openxpki-client_1 chmod 4777 /var/log/openxpki` will make the folder world writable so the problem should be gone.
 
 #### Running on SELinux
 
@@ -122,4 +122,3 @@ All key files (except for data vault) are stored in the database so make sure al
 Translations are done using gettext. By default the container comes with a file that covers translations of the sample config and the backend. If you need to modify or extend the translations, you must generate your own po file.
 
 Create a folder `openxpki-config/i18n/en_US` and place your overrides/extensions in one or muliple files ending with `.po`. When you need to update the internal translations, either create a file `openxpki-config/i18n/.update` (can be empty) or run `update-i18n` inside the **client** container. The script will merge the contents of `contrib/i18n/` with your local extensions, so make sure you update this when you install a new release. You need to restart the client container afterwards to pull in the new translation file.
-
