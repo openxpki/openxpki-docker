@@ -27,7 +27,13 @@ openxpki-config:
 
 compose: openxpki-config  ## call docker-compose, implies init
 	cp -n local.yaml openxpki-config/config.d/local.yaml
+	bin/setup-selinux.sh
 	docker-compose up
+
+compose-podman: openxpki-config  ## call podman-compose with SELinux compatibility
+	cp -n local.yaml openxpki-config/config.d/local.yaml
+	bin/setup-selinux.sh --podman
+	docker-compose -f docker-compose.yml -f docker-compose.podman.yml up
 
 sample-config: ## run the sampleconfig script from contrib/ 
 	docker exec -it $(shell docker ps -aqf "name=${COMPOSE_PROJECT_NAME}_openxpki-server_1") /bin/bash /etc/openxpki/contrib/sampleconfig.sh

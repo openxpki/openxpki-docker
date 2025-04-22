@@ -61,12 +61,33 @@ In case the WebUI does not start or you get a 500 Server Error when calling the 
 
 #### Running on SELinux
 
-Some distros, e.g. CentOS/RHEL, have SELinux enabled by default which will likely prevent the docker container to read the mounted config volume. You can work around this by adding a `:z` to the volume path in the docker-compose.yml - please read https://github.com/moby/moby/issues/30934 **before** doing so as it can make your system unusable!
+Some distros, e.g. CentOS/RHEL, have SELinux enabled by default which will likely prevent the docker container to read the mounted config volume. The standard `make compose` command now automatically handles SELinux contexts for you by running the `bin/setup-selinux.sh` script.
 
-```yaml
-volumes:
-  - ./openxpki-config:/etc/openxpki:z
+If you need to manually set the SELinux context, you can run:
+```bash
+bin/setup-selinux.sh
 ```
+
+#### Running with Podman
+
+To run OpenXPKI with Podman (especially rootless Podman), use the following command:
+
+```bash
+make compose-podman
+```
+
+This will set up SELinux contexts and create the necessary Podman compatibility settings automatically.
+
+For more advanced Podman configuration options:
+
+```bash
+# Manual configuration
+bin/setup-selinux.sh --podman
+
+# Run with the generated configuration
+docker-compose -f docker-compose.yml -f docker-compose.podman.yml up
+```
+
 #### Running on Windows
 
 The sample configuration uses a so called symlink to a template directory to create the "democa". Windows does not support symlinks and when you clone 
