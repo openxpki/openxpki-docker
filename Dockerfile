@@ -5,16 +5,23 @@ ARG OPENXPKI_NOCONFIG=1
 
 RUN apt-get update && \
     apt-get upgrade --assume-yes && \
-    apt-get install --assume-yes gpg libdbd-mariadb-perl libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less gettext
+    apt-get install --assume-yes gpg libdbd-mariadb-perl libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less gettext curl
 
 RUN rm /etc/locale.gen && \
     (for lang in "en_US" "de_DE"; do echo "$lang.UTF-8 UTF-8" >> /etc/locale.gen; done) && \
     dpkg-reconfigure --frontend=noninteractive locales
 
-RUN wget http://packages.openxpki.org/v3/bookworm/openxpki.sources -O - 2>/dev/null | tee /etc/apt/sources.list.d/openxpki.sources
-RUN wget http://packages.openxpki.org/v3/bookworm/Release.key -O - 2>/dev/null | gpg -o /usr/share/keyrings/openxpki.pgp --dearmor
-RUN apt-get update && apt-get install --assume-yes libopenxpki-perl openxpki-i18n openxpki-cgi-session-driver
-RUN apt-get clean
+RUN mkdir -p /etc/apt/keyrings && \
+    wget http://packages.openxpki.org/v3/bookworm/openxpki.sources -O /etc/apt/sources.list.d/openxpki.sources && \
+    wget http://packages.openxpki.org/v3/bookworm/Release.key -O - 2>/dev/null | gpg -o /etc/apt/keyrings/openxpki.pgp --dearmor && \
+    chmod a+r /etc/apt/keyrings/openxpki.pgp && \
+    apt-get update && \
+    apt-get install --assume-yes \
+        libopenxpki-perl \
+        openxpki-i18n \
+        openxpki-cgi-session-driver && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Hack to run rhel/sles configs in this container
 RUN /usr/bin/id -u www-data | xargs /usr/sbin/useradd apache -s /usr/sbin/nologin -b /var/www -g www-data -o -u
