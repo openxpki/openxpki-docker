@@ -22,10 +22,11 @@ prune:  ## prune unused images (all!)
 init: openxpki-config  ## clone initial config from github
 
 openxpki-config:
-	git clone  https://github.com/openxpki/openxpki-config --single-branch --branch=community
+	git clone  https://github.com/openxpki/openxpki-config --single-branch --branch=develop
 	cp contrib/wait_on_init.yaml openxpki-config/config.d/system/local.yaml
 
 compose: openxpki-config  ## call docker-compose, implies init
+	cp -n local.yaml openxpki-config/config.d/local.yaml
 	docker-compose up
 
 sample-config: ## run the sampleconfig script from contrib/ 
@@ -46,4 +47,3 @@ purge:	clean  ## remove containers and volumes
 
 purge-all: purge
 	rm -rf openxpki-config
-

@@ -47,7 +47,6 @@ services:
 
 volumes:
   openxpkidb:
-  openxpkisocket:
   openxpkidbsocket:
+  openxpkisocket:
   openxpkilog:
-
