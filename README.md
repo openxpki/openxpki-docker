@@ -10,21 +10,22 @@ The provided docker-compose creates three containers:
 
 ### Initial Setup
 
-Before running compose you **MUST** place a configuration directory named `openxpki-config` in the current directory. This can be done in multiple ways:
+Before running OpenXPKI, you need to set up the configuration directory. Follow these steps:
 
-#### Method 1: Use the built-in make command (recommended)
+#### Step 1: Clone the configuration repository
 ```bash
-# The make command will handle everything for you
-make compose
+# Clone the OpenXPKI configuration repository into your current directory
+git clone https://github.com/openxpki/openxpki-config.git --single-branch --branch=community
 ```
 
-#### Method 2: Manual setup
-```bash
-# 1. Clone the OpenXPKI configuration repository
-git clone https://github.com/openxpki/openxpki-config.git --single-branch --branch=community
+#### Step 2: Create the database wait configuration
+The OpenXPKI server needs to wait for the database to be available before starting. Create this configuration file:
 
-# 2. Create the database wait configuration file
+```bash
+# Create the directory structure if it doesn't exist
 mkdir -p openxpki-config/config.d/system/
+
+# Create the database wait configuration file
 cat > openxpki-config/config.d/system/local.yaml << EOF
 database:
   main:
@@ -32,12 +33,20 @@ database:
       retry_count: 5
       retry_interval: 15
 EOF
+```
 
-# 3. Start the containers
+#### Step 3: Start the OpenXPKI environment
+```bash
+# Option 1: If you have 'make' installed (recommended)
+make compose
+
+# Option 2: Use docker-compose directly
 docker-compose up
 ```
 
-The default configuration expects the database to be available at server startup which might not be the case when using docker, especially on the first start when the database needs to be created. The wait_on_init configuration created above tells OpenXPKI to wait for the database to become available.
+> **Note:** The startup takes about a minute. You'll see some warnings while the OpenXPKI server waits for the database to be ready. Wait until you see messages like "Binding to UNIX socket file..."
+
+The system is started with the configuration found in the openxpki-config path, **but without any tokens installed**! Place your keys and certificates into the `ca` directory of the config directory and follow the instructions given in the quickstart tutorial: https://openxpki.readthedocs.io/en/latest/quickstart.html#setup-base-certificates (*there is also a helper script for importing the keys, see below*).
 
 > **Note:** All commands in this README assume you're in the root directory of this repository (openxpki-docker). If you cloned the repository to a different directory name, adjust paths accordingly.
 
