@@ -12,11 +12,15 @@ The provided docker-compose creates three containers:
 
 Before running OpenXPKI, you need to set up the configuration directory. Follow these steps:
 
+#### Directory Structure Overview:
+- **openxpki-docker/** - The main repository containing docker-compose.yml and Makefile
+  - **openxpki-config/** - Configuration directory (will be created in step 2)
+
 #### Step 1: Navigate to the openxpki-docker directory
 ```bash
 # Make sure you're in the openxpki-docker repository directory
-# NOT in a directory with a different name like OPENXPKI__DOCKER
-cd /path/to/openxpki-docker
+# This is the directory containing docker-compose.yml and Makefile
+cd /path/to/openxpki-docker  # Not inside openxpki-config!
 ```
 
 #### Step 2: Clone the configuration repository
@@ -44,8 +48,9 @@ EOF
 
 #### Step 4: Start the OpenXPKI environment
 ```bash
-# IMPORTANT: Run these commands in the openxpki-docker directory,
-# where the Makefile and docker-compose.yml files are located
+# VERY IMPORTANT: Run these commands in the openxpki-docker directory,
+# NOT inside the openxpki-config directory
+# You must be in the directory containing docker-compose.yml and Makefile
 
 # Option 1: If you have 'make' installed (recommended)
 make compose
@@ -53,6 +58,8 @@ make compose
 # Option 2: Use docker-compose directly
 docker-compose up
 ```
+
+> **CRITICAL NOTE:** If you try to run `make compose` or `docker-compose up` from inside the openxpki-config directory, it will fail because the Makefile and docker-compose.yml files are in the parent directory.
 
 > **Note:** The startup takes about a minute. You'll see some warnings while the OpenXPKI server waits for the database to be ready. Wait until you see messages like "Binding to UNIX socket file..."
 
