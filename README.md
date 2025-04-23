@@ -12,13 +12,20 @@ The provided docker-compose creates three containers:
 
 Before running OpenXPKI, you need to set up the configuration directory. Follow these steps:
 
-#### Step 1: Clone the configuration repository
+#### Step 1: Navigate to the openxpki-docker directory
+```bash
+# Make sure you're in the openxpki-docker repository directory
+# NOT in a directory with a different name like OPENXPKI__DOCKER
+cd /path/to/openxpki-docker
+```
+
+#### Step 2: Clone the configuration repository
 ```bash
 # Clone the OpenXPKI configuration repository into your current directory
 git clone https://github.com/openxpki/openxpki-config.git --single-branch --branch=community
 ```
 
-#### Step 2: Create the database wait configuration
+#### Step 3: Create the database wait configuration
 The OpenXPKI server needs to wait for the database to be available before starting. Create this configuration file:
 
 ```bash
@@ -35,8 +42,11 @@ database:
 EOF
 ```
 
-#### Step 3: Start the OpenXPKI environment
+#### Step 4: Start the OpenXPKI environment
 ```bash
+# IMPORTANT: Run these commands in the openxpki-docker directory,
+# where the Makefile and docker-compose.yml files are located
+
 # Option 1: If you have 'make' installed (recommended)
 make compose
 
