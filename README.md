@@ -8,32 +8,38 @@ The provided docker-compose creates three containers:
 - OpenXPKI Server
 - OpenXPKI WebUI
 
-Before running compose you **MUST** place a configuration directory named `openxpki-config` in the current directory, the easiest way is to clone the branch `community` from the `openxpki-config` repository at github.
+### Initial Setup
 
+Before running compose you **MUST** place a configuration directory named `openxpki-config` in the current directory. This can be done in multiple ways:
+
+#### Method 1: Use the built-in make command (recommended)
 ```bash
-# Make sure you're in the openxpki-docker directory
-$ git clone https://github.com/openxpki/openxpki-config.git --single-branch --branch=community
+# The make command will handle everything for you
+make compose
 ```
 
-The default configuration expects the database to be available at server startup which might not be the case when using docker, especially on the first start when the database needs to be created. To avoid the server to crash when the database is not available you should set `wait_on_init` in `config.d/system/database.yaml`. For a production setup you should place this into your main configuration but for a test drive you can use the provided overlay file:
-
+#### Method 2: Manual setup
 ```bash
-# Create config overlay file to let OpenXPKI wait for the database
-# First, ensure the target directory exists
-$ mkdir -p openxpki-config/config.d/system/
+# 1. Clone the OpenXPKI configuration repository
+git clone https://github.com/openxpki/openxpki-config.git --single-branch --branch=community
 
-# Then copy the wait_on_init.yaml file to the target location
-$ cp contrib/wait_on_init.yaml openxpki-config/config.d/system/local.yaml
-
-# If the file cannot be found, you can create it manually with:
-$ cat > openxpki-config/config.d/system/local.yaml << EOF
+# 2. Create the database wait configuration file
+mkdir -p openxpki-config/config.d/system/
+cat > openxpki-config/config.d/system/local.yaml << EOF
 database:
   main:
     wait_on_init:
       retry_count: 5
       retry_interval: 15
 EOF
+
+# 3. Start the containers
+docker-compose up
 ```
+
+The default configuration expects the database to be available at server startup which might not be the case when using docker, especially on the first start when the database needs to be created. The wait_on_init configuration created above tells OpenXPKI to wait for the database to become available.
+
+> **Note:** All commands in this README assume you're in the root directory of this repository (openxpki-docker). If you cloned the repository to a different directory name, adjust paths accordingly.
 
 Now run docker-compose:
 
