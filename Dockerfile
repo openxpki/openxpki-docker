@@ -43,6 +43,8 @@ RUN mkdir -m755 /run/openxpkid /run/openxpki-clientd && \
     chown openxpkiclient /run/openxpki-clientd
 VOLUME /run/openxpkid /run/openxpki-clientd
 
+RUN mkdir -p -m755 /var/www/static/_global/ && cp /usr/share/doc/libopenxpki-perl/examples/home.html /var/www/static/_global/home.html
+
 CMD ["/usr/bin/openxpkictl","start","server","--no-detach"]
 
 EXPOSE 80 443
