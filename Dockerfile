@@ -5,7 +5,7 @@ ARG OPENXPKI_NOCONFIG=1
 
 RUN apt-get update && \
     apt-get upgrade --assume-yes && \
-    apt-get install --assume-yes gpg libdbd-mariadb-perl libdbd-mysql-perl libapache2-mod-fcgid apache2 wget locales less gettext
+    apt-get install --assume-yes gpg libdbd-mariadb-perl libdbd-mysql-perl apache2 wget locales less gettext
 
 RUN rm /etc/locale.gen && \
     (for lang in "en_US" "de_DE"; do echo "$lang.UTF-8 UTF-8" >> /etc/locale.gen; done) && \
@@ -24,13 +24,12 @@ RUN /usr/bin/id -u www-data | xargs /usr/sbin/useradd wwwrun -s /usr/sbin/nologi
 RUN wget https://raw.githubusercontent.com/openxpki/clca/master/bin/clca -O /usr/local/bin/clca && chmod 755 /usr/local/bin/clca
 
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
-VOLUME /var/log/openxpki /etc/openxpki
+VOLUME /var/log/openxpki /var/log/openxpki-ui /etc/openxpki
 WORKDIR /var/log/openxpki/
-RUN a2dissite 000-default; a2disconf serve-cgi-bin
-# look alike for the default apache setup from postinst to let a2ensite openxpki work
-RUN ln -s /etc/openxpki/contrib/apache2-openxpki-site.conf /etc/apache2/sites-available/openxpki.conf
-RUN ln -s ../sites-available/openxpki.conf /etc/apache2/sites-enabled/
-RUN a2enmod cgid fcgid headers rewrite ssl
+RUN a2dissite 000-default; a2disconf javascript-common localized-error-pages security serve-cgi-bin other-vhosts-access-log
+RUN a2enmod headers macro proxy proxy_http rewrite ssl
+RUN echo "ErrorLog /proc/self/fd/2" > /etc/apache2/conf-enabled/log2stderr.conf
+
 COPY bin/setup-cert.sh /usr/bin/setup-cert
 RUN chmod +x /usr/bin/setup-cert
 COPY bin/start-apache.sh /usr/bin/start-apache
@@ -38,6 +37,12 @@ RUN chmod +x /usr/bin/start-apache
 COPY bin/update-i18n.sh /usr/bin/update-i18n
 RUN chmod +x /usr/bin/update-i18n
 
-CMD ["/usr/bin/openxpkictl","start","--no-detach"]
+# The order here is important
+RUN mkdir -m755 /run/openxpkid /run/openxpki-clientd && \
+    chown openxpki /run/openxpkid && \
+    chown openxpkiclient /run/openxpki-clientd
+VOLUME /run/openxpkid /run/openxpki-clientd
+
+CMD ["/usr/bin/openxpkictl","start","server","--no-detach"]
 
 EXPOSE 80 443

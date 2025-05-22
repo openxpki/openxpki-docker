@@ -1,53 +1,102 @@
-version: "3"
-
 services:
   db:
 #    restart: always
+    container_name: OpenXPKI_Database
     image: mariadb:10
     command: --default-authentication-plugin=mysql_native_password
+    user: mysql:mysql
     volumes:
       - openxpkidb:/var/lib/mysql
       - openxpkidbsocket:/var/run/mysqld/
       - ./openxpki-config/contrib/sql/schema-mariadb.sql:/docker-entrypoint-initdb.d/schema-mariadb.sql
+    healthcheck:
+      test: ["CMD-SHELL", "[ -S /var/run/mysqld/mysqld.sock ]"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     environment:
       MYSQL_DATABASE: openxpki
       MYSQL_USER: openxpki
-      MYSQL_PASSWORD: openxpki 
+      MYSQL_PASSWORD: openxpki
       MYSQL_ROOT_PASSWORD: topsecret
 
-  openxpki-server:
+  server:
 #    restart: always
+    container_name: OpenXPKI_Server
     image: whiterabbitsecurity/openxpki3
-    command: /usr/bin/openxpkictl start --no-detach
+    command: /usr/bin/openxpkictl start server --nd
+    user: openxpki:openxpki
+    group_add:
+     - openxpkiclient
+    tmpfs:
+      - /tmp
     volumes:
       - ./openxpki-config:/etc/openxpki
       - openxpkilog:/var/log/openxpki
-      - openxpkisocket:/var/openxpki/
+      - openxpkisocket:/run/openxpkid
       - openxpkidbsocket:/var/run/mysqld/
       # this will not work on all OS
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
+    healthcheck:
+      test: /usr/bin/openxpkictl status server
+      interval: 5s
+      timeout: 3s
+      retries: 5
     depends_on:
-        - db
+      db:
+        condition: service_healthy
 
-  openxpki-client:
+  client:
 #    restart: always
+    container_name: OpenXPKI_Client
+    image: whiterabbitsecurity/openxpki3
+    command: /usr/bin/openxpkictl start client --nd
+    user: openxpkiclient:openxpkiclient
+    group_add:
+     - www-data
+    tmpfs:
+      - /tmp
+    volumes:
+      - ./openxpki-config/client.d:/etc/openxpki/client.d
+      - openxpkilogui:/var/log/openxpki-ui
+      - openxpkisocket:/run/openxpkid
+      - openxpkiclientsocket:/run/openxpki-clientd
+      - openxpkidbsocket:/var/run/mysqld/
+    healthcheck:
+      test: /usr/bin/openxpkictl status client
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    depends_on:
+      server:
+        condition: service_healthy
+
+  web:
+    container_name: OpenXPKI_WebUI
     image: whiterabbitsecurity/openxpki3
     command: /usr/bin/start-apache
     ports:
-      - "8080:80/tcp"
-      - "8443:443/tcp"
+    - "8080:80/tcp"
+    - "8443:443/tcp"
     volumes:
-      - ./openxpki-config:/etc/openxpki
-      - openxpkilog:/var/log/openxpki
-      - openxpkisocket:/var/openxpki/
-      - openxpkidbsocket:/var/run/mysqld/
+    - ./openxpki-config/contrib/apache2-openxpki-site.conf:/etc/apache2/sites-enabled/openxpki.conf
+    - ./openxpki-config/tls/:/etc/openxpki/tls/
+    - openxpkiclientsocket:/run/openxpki-clientd
+    healthcheck:
+      test: wget -q http://localhost/healthcheck/ping
+      interval: 5s
+      timeout: 3s
+      retries: 5
     depends_on:
-        - openxpki-server
+      client:
+        condition: service_healthy
 
 volumes:
   openxpkidb:
   openxpkisocket:
+  openxpkiclientsocket:
   openxpkidbsocket:
   openxpkilog:
+  openxpkilogui:
 

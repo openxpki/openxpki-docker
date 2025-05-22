@@ -1,5 +1,5 @@
 #!/bin/bash
-BASE_PATH="/etc/openxpki/ca"
+BASE_PATH="/bootstrap"
 
 #computes alias for identifier
 function alias_for_identifier() {
@@ -98,7 +98,9 @@ function do_realm_dir() {
   fi
 }
 
-#look for realm folders and export contained certificates
-for D in $(find "$BASE_PATH" -mindepth 1 -maxdepth 1 -type d); do
-  do_realm_dir "$D"
-done
+if [ -d "$BASE_PATH" ]; then
+  #look for realm folders and export contained certificates
+  for D in $(find "$BASE_PATH" -mindepth 1 -maxdepth 1 -type d); do
+    do_realm_dir "$D"
+  done
+fi;
