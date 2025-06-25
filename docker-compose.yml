@@ -35,6 +35,7 @@ services:
       - openxpkilog:/var/log/openxpki
       - openxpkisocket:/run/openxpkid
       - openxpkidbsocket:/var/run/mysqld/
+      - openxpkidownload:/var/www/download
       # this will not work on all OS
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
@@ -59,7 +60,7 @@ services:
       - /tmp
     volumes:
       - ./openxpki-config/client.d:/etc/openxpki/client.d
-      - openxpkilogui:/var/log/openxpki-ui
+      - openxpkilogui:/var/log/openxpki-client
       - openxpkisocket:/run/openxpkid
       - openxpkiclientsocket:/run/openxpki-clientd
       - openxpkidbsocket:/var/run/mysqld/
@@ -77,12 +78,13 @@ services:
     image: whiterabbitsecurity/openxpki3
     command: /usr/bin/start-apache
     ports:
-    - "8080:80/tcp"
-    - "8443:443/tcp"
+      - "8080:80/tcp"
+      - "8443:443/tcp"
     volumes:
-    - ./openxpki-config/contrib/apache2-openxpki-site.conf:/etc/apache2/sites-enabled/openxpki.conf
-    - ./openxpki-config/tls/:/etc/openxpki/tls/
-    - openxpkiclientsocket:/run/openxpki-clientd
+      - ./openxpki-config/contrib/apache2-openxpki-site.conf:/etc/apache2/sites-enabled/openxpki.conf
+      - ./openxpki-config/tls/:/etc/openxpki/tls/
+      - openxpkiclientsocket:/run/openxpki-clientd
+      - openxpkidownload:/var/www/download:ro
     healthcheck:
       test: wget -q http://localhost/healthcheck/ping
       interval: 5s
@@ -99,4 +101,4 @@ volumes:
   openxpkidbsocket:
   openxpkilog:
   openxpkilogui:
-
+  openxpkidownload:

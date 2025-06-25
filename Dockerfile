@@ -24,8 +24,8 @@ RUN /usr/bin/id -u www-data | xargs /usr/sbin/useradd wwwrun -s /usr/sbin/nologi
 RUN wget https://raw.githubusercontent.com/openxpki/clca/master/bin/clca -O /usr/local/bin/clca && chmod 755 /usr/local/bin/clca
 
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
-VOLUME /var/log/openxpki /var/log/openxpki-ui /etc/openxpki
-WORKDIR /var/log/openxpki/
+VOLUME /etc/openxpki
+
 RUN a2dissite 000-default; a2disconf javascript-common localized-error-pages security serve-cgi-bin other-vhosts-access-log
 RUN a2enmod headers macro proxy proxy_http rewrite ssl
 RUN echo "ErrorLog /proc/self/fd/2" > /etc/apache2/conf-enabled/log2stderr.conf
@@ -42,6 +42,16 @@ RUN mkdir -m755 /run/openxpkid /run/openxpki-clientd && \
     chown openxpki /run/openxpkid && \
     chown openxpkiclient /run/openxpki-clientd
 VOLUME /run/openxpkid /run/openxpki-clientd
+
+RUN mkdir -p -m750 /var/log/openxpki-server /var/log/openxpki-client && \
+    chown openxpki:pkiadm /var/log/openxpki-server && \
+    chown openxpkiclient:pkiadm /var/log/openxpki-client
+VOLUME /var/log/openxpki-server /var/log/openxpki-client
+WORKDIR /var/log/
+
+RUN mkdir -p -m755 /var/www/download && \
+    chown openxpki:openxpki /var/www/download
+VOLUME /var/www/download
 
 RUN mkdir -p -m755 /var/www/static/_global/ && cp /usr/share/doc/libopenxpki-perl/examples/home.html /var/www/static/_global/home.html
 
