@@ -28,7 +28,7 @@ compose: openxpki-config  ## call docker-compose, implies init
 	docker compose up -d web
 
 sample-config: ## run the sampleconfig script
-	docker compose exec -u root  -it server /usr/share/doc/libopenxpki-perl/examples/sampleconfig.sh
+	docker compose exec -u root  -it server /etc/openxpki/contrib/sampleconfig.sh
 
 restart-client: ## restart the client container
 	docker compose restart client

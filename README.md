@@ -50,7 +50,6 @@ The webserver container maps the folder `openxpki-config/tls/` to `/etc/openxpk
 
 ```ini
 SSLCertificateFile /etc/openxpki/tls/endentity/openxpki.crt
-SSLCertificateChainFile /etc/openxpki/tls/endentity/openxpki.crt
 SSLCertificateKeyFile /etc/openxpki/tls/private/openxpki.pem
 SSLCACertificatePath /etc/openxpki/tls/chain/
 ```
@@ -86,10 +85,10 @@ To import your own keys and certificates follow the instructions given in the QU
 
 ### Testdrive
 
-The repository comes with a bootstrap script, that generates a two-tier PKI hierarchy and prepares anything "ready-to-go".
+The default config repository comes with a bootstrap script, that generates a two-tier PKI hierarchy and prepares anything "ready-to-go".
 
 ```bash
-$ docker compose exec -u root  -it server /usr/share/doc/libopenxpki-perl/examples/sampleconfig.sh
+$ docker compose exec -u root  -it server /etc/openxpki/contrib/sampleconfig.sh
 ```
 
 If you have `make` installed, just run `make sample-config` which will run the above command for you.
