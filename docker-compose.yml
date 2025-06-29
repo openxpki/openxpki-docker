@@ -73,10 +73,10 @@ services:
       server:
         condition: service_healthy
 
-  web:
+  web: &web-apache
     container_name: OpenXPKI_WebUI
     image: whiterabbitsecurity/openxpki3
-    command: /usr/bin/start-apache
+    command: /usr/bin/start-webserver apache
     ports:
       - "8080:80/tcp"
       - "8443:443/tcp"
@@ -93,6 +93,16 @@ services:
     depends_on:
       client:
         condition: service_healthy
+
+  web-nginx:
+    << : *web-apache
+    container_name: OpenXPKI_WebUI_nginx
+    command: /usr/bin/start-webserver nginx
+    volumes:
+      - ./openxpki-config/contrib/nginx-openxpki-site:/etc/nginx/sites-enabled/openxpki
+      - ./openxpki-config/tls/:/etc/openxpki/tls/
+      - openxpkiclientsocket:/run/openxpki-clientd
+      - openxpkidownload:/var/www/download:ro
 
 volumes:
   openxpkidb:
