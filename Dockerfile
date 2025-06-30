@@ -5,7 +5,7 @@ ARG OPENXPKI_NOCONFIG=1
 
 RUN apt-get update && \
     apt-get upgrade --assume-yes && \
-    apt-get install --assume-yes gpg libdbd-mariadb-perl libdbd-mysql-perl apache2 wget locales less gettext
+    apt-get install --assume-yes gpg libdbd-mariadb-perl libdbd-mysql-perl apache2 nginx wget locales less gettext
 
 RUN rm /etc/locale.gen && \
     (for lang in "en_US" "de_DE"; do echo "$lang.UTF-8 UTF-8" >> /etc/locale.gen; done) && \
@@ -26,14 +26,21 @@ RUN wget https://raw.githubusercontent.com/openxpki/clca/master/bin/clca -O /usr
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
 VOLUME /etc/openxpki
 
+# Apache
 RUN a2dissite 000-default; a2disconf javascript-common localized-error-pages security serve-cgi-bin other-vhosts-access-log
 RUN a2enmod headers macro proxy proxy_http rewrite ssl
 RUN echo "ErrorLog /proc/self/fd/2" > /etc/apache2/conf-enabled/log2stderr.conf
 
+# nginx
+RUN rm /etc/nginx/sites-enabled/default
+RUN echo "error_log /dev/stderr info;" > /etc/nginx/modules-enabled/error-log-stdout.conf
+RUN echo "http { access_log /dev/stdout; }" > /etc/nginx/conf.d/access-log-stdout
+
+# Scripts
 COPY bin/setup-cert.sh /usr/bin/setup-cert
 RUN chmod +x /usr/bin/setup-cert
-COPY bin/start-apache.sh /usr/bin/start-apache
-RUN chmod +x /usr/bin/start-apache
+COPY bin/start-webserver.sh /usr/bin/start-webserver
+RUN chmod +x /usr/bin/start-webserver
 COPY bin/update-i18n.sh /usr/bin/update-i18n
 RUN chmod +x /usr/bin/update-i18n
 
