@@ -2,7 +2,7 @@ services:
   db:
 #    restart: always
     container_name: OpenXPKI_Database
-    image: mariadb:10
+    image: mariadb:11.4
     command: --default-authentication-plugin=mysql_native_password
     user: mysql:mysql
     volumes:
@@ -10,7 +10,7 @@ services:
       - openxpkidbsocket:/var/run/mysqld/
       - ./openxpki-config/contrib/sql/schema-mariadb.sql:/docker-entrypoint-initdb.d/schema-mariadb.sql
     healthcheck:
-      test: ["CMD-SHELL", "[ -S /var/run/mysqld/mysqld.sock ]"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
       timeout: 3s
       retries: 5
