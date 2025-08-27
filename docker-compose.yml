@@ -1,3 +1,6 @@
+x-base-image: &base-image
+  image: whiterabbitsecurity/openxpki3:3.32.8
+
 services:
   db:
 #    restart: always
@@ -21,9 +24,8 @@ services:
       MYSQL_ROOT_PASSWORD: topsecret
 
   server:
-#    restart: always
+    << : *base-image
     container_name: OpenXPKI_Server
-    image: whiterabbitsecurity/openxpki3
     command: /usr/bin/openxpkictl start server --nd
     user: openxpki:openxpki
     group_add:
@@ -32,6 +34,7 @@ services:
       - /tmp
     volumes:
       - ./openxpki-config:/etc/openxpki
+      - ./config/client.key:/home/pkiadm/.oxi/client.key
       - openxpkilog:/var/log/openxpki
       - openxpkisocket:/run/openxpkid
       - openxpkidbsocket:/var/run/mysqld/
@@ -49,7 +52,7 @@ services:
         condition: service_healthy
 
   client:
-#    restart: always
+    << : *base-image
     container_name: OpenXPKI_Client
     image: whiterabbitsecurity/openxpki3
     command: /usr/bin/openxpkictl start client --nd
@@ -74,8 +77,8 @@ services:
         condition: service_healthy
 
   web: &web-apache
+    << : *base-image
     container_name: OpenXPKI_WebUI
-    image: whiterabbitsecurity/openxpki3
     command: /usr/bin/start-webserver apache
     ports:
       - "8080:80/tcp"

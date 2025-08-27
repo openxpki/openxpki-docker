@@ -62,6 +62,11 @@ VOLUME /var/www/download
 
 RUN mkdir -p -m755 /var/www/static/_global/ && cp /usr/share/doc/libopenxpki-perl/examples/home.html /var/www/static/_global/home.html
 
+# Required to make the management commands work
+RUN usermod -aG openxpkiclient pkiadm && \
+    mkdir -m 700 /home/pkiadm/.oxi/ && \
+    chown pkiadm:root /home/pkiadm/.oxi/
+
 CMD ["/usr/bin/openxpkictl","start","server","--no-detach"]
 
 EXPOSE 80 443

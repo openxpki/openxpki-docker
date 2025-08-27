@@ -22,13 +22,15 @@ init: openxpki-config  ## clone initial config from github
 
 openxpki-config:
 	git clone  https://github.com/openxpki/openxpki-config --single-branch --branch=community
-	sed -r "/driver:openxpki/d" openxpki-config/client.d/service/webui/default.yaml
 
 compose: openxpki-config  ## call docker-compose, implies init
 	docker compose up -d web
 
 sample-config: ## run the sampleconfig script
-	docker compose exec -u root  -it server /etc/openxpki/contrib/sampleconfig.sh
+	docker compose exec -u pkiadm  server /bin/bash /etc/openxpki/contrib/sampleconfig.sh
+
+pkiadm:
+	docker compose exec -u pkiadm server /bin/bash
 
 restart-client: ## restart the client container
 	docker compose restart client
