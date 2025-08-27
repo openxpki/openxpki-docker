@@ -26,7 +26,7 @@ $ git clone https://github.com/openxpki/openxpki-config.git \
 	--single-branch --branch=community
 ```
 
-For additional details on configuration, have a look at the [QUICKSTART](https://github.com/openxpki/openxpki-config/blob/master/QUICKSTART.md) document in the configuration repository.
+For additional details on configuration, have a look at the [QUICKSTART](https://github.com/openxpki/openxpki-config/blob/community/QUICKSTART.md) document in the configuration repository.
 
 ### Mandatory Setup
 
@@ -89,7 +89,7 @@ if you change them, also update them in `config.d/system/database.yaml`.
 
 The default uses (again) the filesystem to store the frontend sessions
 so there is nothing to do for a single node setup. Refer to the
-[QUICKSTART](https://github.com/openxpki/openxpki-config/blob/master/QUICKSTART.md) document
+[QUICKSTART](https://github.com/openxpki/openxpki-config/blob/community/QUICKSTART.md) document
 on how to setup a shared session storage using a database.
 
 ## Bring It Up
