@@ -22,8 +22,7 @@ This repository contains a `docker-compose.yml` that spawns four containers
 Before running compose you **MUST** place a configuration directory named `openxpki-config` in the current directory, the easiest way is to clone the branch `community` from the `openxpki-config` repository at github.
 
 ```bash
-$ git clone https://github.com/openxpki/openxpki-config.git \
-	--single-branch --branch=community
+$ git clone https://github.com/openxpki/openxpki-config.git --single-branch --branch=community
 ```
 
 For additional details on configuration, have a look at the [QUICKSTART](https://github.com/openxpki/openxpki-config/blob/community/QUICKSTART.md) document in the configuration repository.
