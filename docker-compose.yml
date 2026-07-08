@@ -101,6 +101,8 @@ services:
     << : *web-apache
     container_name: OpenXPKI_WebUI_nginx
     command: /usr/bin/start-webserver nginx
+    # Don't copy the ports config from web-apache as that clashes
+    ports: []
     volumes:
       - ./openxpki-config/contrib/nginx-openxpki-site:/etc/nginx/sites-enabled/openxpki
       - ./openxpki-config/tls/:/etc/openxpki/tls/
